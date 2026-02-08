@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SyncStay Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #3b82f6;
+            --success: #10b981;
+            --drink-highlight: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Top Bar */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #334155;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--success);
+        }
+
+        /* Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
+        /* Table Card */
+        .table-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #334155;
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .table-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent);
+        }
+
+        .card-header {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #334155;
+        }
+
+        .table-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .order-id {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-family: monospace;
+        }
+
+        /* Order List */
+        .order-items {
+            padding: 10px;
+            flex-grow: 1;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.02);
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .item-row:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* PAID STATE */
+        .item-row.paid {
+            opacity: 0.4;
+            text-decoration: line-through;
+            background: transparent;
+        }
+
+        /* DRINK HIGHLIGHT */
+        .item-row.is-drink {
+            border-left: 3px solid var(--drink-highlight);
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        .item-row.is-drink .item-name {
+            color: var(--drink-highlight);
+            font-weight: 600;
+        }
+
+        .item-price {
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .card-footer {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid #334155;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .due-amount {
+            color: var(--accent);
+            font-size: 1.4rem;
+        }
+
+        .close-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--success);
+            color: #064e3b;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .close-btn:hover {
+            background: #34d399;
+        }
+
+        /* Empty State */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            opacity: 0.2;
+            margin-bottom: 20px;
+        }
+
+        /* Canceled Item Styles */
+        .cancelled-item {
+            text-decoration: line-through;
+            color: var(--danger);
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .cancelled-order {
+            border-bottom-color: var(--danger);
+        }
+
+        /* Ready State */
+        .ready-order {
+            border: 2px solid var(--success) !important;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+        }
+
+        .ready-badge {
+            background-color: var(--success);
+            color: #064e3b;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            margin-left: 10px;
+            display: inline-block;
+        }
+
+        /* Waiter Alert */
+        @keyframes pulse-yellow {
+            0% {
+                box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(245, 158, 11, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+            }
+        }
+
+        .waiter-alert {
+            background: #f59e0b;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-left: 10px;
+            cursor: pointer;
+            animation: pulse-yellow 1.5s infinite;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .waiter-alert:hover {
+            transform: scale(1.05);
+        }
+
+        /* Pulsing Border for Card */
+        .calling-server {
+            border: 2px solid #f59e0b !important;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+            animation: pulse-border 1.5s infinite;
+        }
+
+        @keyframes pulse-border {
+            0% {
+                box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(245, 158, 11, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+            }
+        }
+
+        .waiter-alert {
+            background: #f59e0b;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-left: 10px;
+            cursor: pointer;
+            animation: pulse-yellow 1.5s infinite;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .waiter-alert:hover {
+            transform: scale(1.05);
+        }
+
+        /* Pulsing Border for Card */
+        .calling-server {
+            border: 2px solid #f59e0b !important;
+            animation: amber-pulse 2s infinite;
+        }
+
+        @keyframes amber-pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(245, 158, 11, 0.6), 0 0 40px rgba(245, 158, 11, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 30px rgba(245, 158, 11, 0.8), 0 0 60px rgba(245, 158, 11, 0.4);
+            }
+        }
+
+        @keyframes bell-shake {
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: rotate(-10deg);
+            }
+
+            20%,
+            40%,
+            60%,
+            80% {
+                transform: rotate(10deg);
+            }
+        }
+
+        .waiter-alert-banner {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            padding: 12px 16px;
+            margin-top: 8px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            text-align: center;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .waiter-alert-banner:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+        }
+
+        .bell-shake {
+            animation: bell-shake 0.8s ease-in-out infinite;
+            font-size: 1.1rem;
+        }
+
+        /* History Modal & Button */
+        .history-btn {
+            background: transparent;
+            border: 1px solid #334155;
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .history-btn:hover {
+            border-color: var(--accent);
+            color: var(--text-primary);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background-color: var(--bg);
+            margin: 5% auto;
+            border: 1px solid #334155;
+            width: 90%;
+            max-width: 900px;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 1px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            border-bottom: 2px solid transparent;
+            font-weight: 600;
+        }
+
+        .tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .history-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #334155;
+        }
+
+        .history-total {
+            color: var(--success);
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(239, 68, 68, 0.95);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-weight: 700;
+            z-index: 9999;
+            animation: slideInToast 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        @keyframes slideInToast {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutToast {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <div>
+            <h1>SyncStay Manager</h1>
+            <div style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 5px;">Live Table Overview</div>
+        </div>
+        <div class="live-indicator">
+            <button class="history-btn" onclick="openHistory()">
+                <i class="fas fa-history"></i> Transaction History
+            </button>
+            <div class="dot" style="margin-left: 15px;"></div> System Active
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div id="historyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 style="margin:0">Transaction Logs</h2>
+                <i class="fas fa-times" style="font-size: 20px; cursor: pointer;" onclick="closeHistory()"></i>
+            </div>
+            <div class="modal-body">
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab('completed')">✅ Completed / Paid</div>
+                    <div class="tab" onclick="switchTab('canceled')">🚫 Canceled / Voided</div>
+                </div>
+                <div id="history-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="orders-container" class="dashboard-grid">
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const container = document.getElementById('orders-container');
+
+        let activeOrdersData = []; // Store active orders to access via ID
+        let historyLog = [];
+        let currentHistoryTab = 'completed';
+
+        // Listen for updates
+        // NEW: Premium Cancellation Visual Feedback for POS with Toast
+        socket.on('kitchen_cancel', (orderId) => {
+            console.log('🚫 Order canceled:', orderId);
+
+            // Find the order to get its shortId
+            const order = activeOrdersData.find(o => o.orderId == orderId);
+            const shortId = order ? (order.shortId || order.orderId.toString().slice(-4)) : orderId.toString().slice(-4);
+
+            // Show toast notification
+            showToast(`Order #${shortId} Canceled`);
+
+            const card = Array.from(container.children).find(c => c.dataset.orderId == orderId);
+            if (card) {
+                // Red glow animation
+                card.style.border = '2px solid #ef4444';
+                card.style.boxShadow = '0 0 20px rgba(239, 68, 68, 0.6)';
+
+                // Add canceled overlay banner
+                const overlay = document.createElement('div');
+                overlay.style.cssText = 'position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(239,68,68,0.95); color:white; padding:15px 30px; border-radius:12px; font-size:20px; font-weight:bold; z-index:10; letter-spacing:1px;';
+                overlay.textContent = '🚫 CANCELED';
+                card.style.position = 'relative';
+                card.appendChild(overlay);
+
+                // Fade out after 3 seconds
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.5s, transform 0.5s';
+                    card.style.opacity = '0';
+                    card.style.transform = 'scale(0.95)';
+                    setTimeout(() => card.remove(), 500);
+                }, 3000);
+            }
+        });
+
+        // NEW: Listen for Waiter Call (Premium Logic)
+        socket.on('waiter_call', (data) => {
+            console.log("🔔 Waiter called for Table:", data.tableNumber);
+
+            // Audio Alert
+            const audio = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
+            audio.volume = 0.5;
+            audio.play().catch(e => console.log("Audio ignored"));
+
+            showToast(`🔔 Table ${data.tableNumber} is calling!`);
+
+            // Visual Card Update (If card exists)
+            const card = Array.from(container.children).find(c => c.dataset.orderId == data.orderId);
+            if (card) {
+                card.classList.add('calling-server');
+                // Ensure banner is visible (it might be re-rendered by manager_update, but this is immediate)
+                if (!card.querySelector('.waiter-alert-banner')) {
+                    const header = card.querySelector('.card-header');
+                    const banner = document.createElement('div');
+                    banner.className = 'waiter-alert-banner';
+                    banner.onclick = (e) => resolveWaiter(data.orderId, e);
+                    banner.innerHTML = `<i class="fas fa-bell bell-shake"></i><span>SERVICE DEMANDÉ</span>`;
+                    header.appendChild(banner);
+                }
+            }
+        });
+
+        socket.on('manager_update', (orders) => {
+            console.log("Updated Orders:", orders);
+            activeOrdersData = orders; // Update local reference
+            renderOrders(orders);
+        });
+
+        function renderOrders(orders) {
+            container.innerHTML = '';
+
+            if (!orders) {
+                renderEmptyState();
+                return;
+            }
+
+            // FILTER: Capture cancelled orders for history, then remove from view
+            orders.forEach(o => {
+                if (o.status === 'Annulé') {
+                    // Check if already in history to avoid duplication
+                    const exists = historyLog.find(h => h.orderId === o.orderId && h.status === 'canceled');
+                    if (!exists) {
+                        const historyEntry = {
+                            ...o,
+                            status: 'canceled',
+                            timestamp: new Date().toLocaleTimeString(),
+                            finalTotal: 0
+                        };
+                        historyLog.unshift(historyEntry);
+                    }
+                }
+            });
+
+            // Display strict filter: No cancelled orders on dashboard
+            const displayOrders = orders.filter(o => o.status !== 'Annulé');
+
+            if (displayOrders.length === 0) {
+                renderEmptyState();
+                return;
+            }
+
+            displayOrders.forEach(order => {
+                // Calculate Remaining Balance (exclude cancelled items)
+                const unpaidItems = order.items ? order.items.filter(i => !i.isPaid && !i.cancelled) : [];
+                const remainingTotal = unpaidItems.reduce((sum, i) => sum + i.price, 0);
+
+                // NEW: Ready Status Check
+                const isReady = order.status === 'Prêt à être servi';
+                const readyClass = isReady ? 'ready-order' : '';
+                const readyBadge = isReady ? '<span class="ready-badge">✅ PRÊT / READY</span>' : '';
+
+                // NEW: Waiter Call Check (Persistent)
+                let waiterAlert = '';
+                let callingClass = '';
+                if (order.needsWaiter) {
+                    callingClass = 'calling-server';
+                    waiterAlert = `<div class="waiter-alert-banner" onclick="resolveWaiter(${order.orderId}, event)">
+                        <i class="fas fa-bell bell-shake"></i>
+                        <span>SERVICE DEMANDÉ</span>
+                    </div>`;
+                }
+
+                const card = document.createElement('div');
+                card.className = `table-card ${readyClass} ${callingClass}`;
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div style="display:flex; justify-content:space-between; align-items:center; width:100%">
+                            <div>
+                                <span class="table-title">Table ${order.tableNumber || order.table}</span>
+                                ${readyBadge}
+                            </div>
+                            <span class="order-id">#${(order.shortId || order.orderId).toString().slice(-4)}</span>
+                        </div>
+                        ${waiterAlert}
+                    </div>
+                    <div class="order-items">
+                        ${(order.items || []).map((item, index) => renderItem(item, index, order.orderId)).join('')}
+                    </div>
+                    <div class="card-footer">
+                        <div class="total-row">
+                            <span>Remaining Due:</span>
+                            <span class="due-amount">${remainingTotal.toFixed(2)} DH</span>
+                        </div>
+                        <button class="close-btn" onclick="closeTable(${order.orderId})">
+                            <i class="fas fa-check-circle"></i> Complete Session
+                        </button>
+                    </div>
+                `;
+                card.dataset.orderId = order.orderId; // Add dataset for tracking
+                container.appendChild(card);
+            });
+        }
+
+        function renderEmptyState() {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-utensils empty-icon"></i>
+                    <h2>No Active Tables</h2>
+                    <p>Orders placed on the app will appear here instantly.</p>
+                </div>`;
+        }
+
+        function renderItem(item, index, orderId) {
+            const drinkKeywords = ['drink', 'coke', 'soda', 'water', 'juice', 'sprite', 'fanta', 'coffee', 'tea', 'beer', 'wine', 'coca'];
+            const isDrink = drinkKeywords.some(k => item.name.toLowerCase().includes(k));
+
+            return `
+                <div class="item-row ${isDrink ? 'is-drink' : ''} ${item.isPaid ? 'paid' : ''} ${item.cancelled ? 'cancelled-item' : ''}" 
+                     onclick="togglePay(${orderId}, ${index})" 
+                     title="${item.cancelled ? 'Item cancelled' : 'Click to toggle paid status'}">
+                     <div style="display:flex; align-items:center; gap:10px;">
+                        ${isDrink ? '<i class="fas fa-glass-cheers" style="color:var(--drink-highlight)"></i>' : '<i class="fas fa-circle" style="font-size:6px; opacity:0.5"></i>'}
+                        <span class="item-name">${item.name}</span>
+                     </div>
+                    <span class="item-price">${item.price}</span>
+                </div>
+            `;
+        }
+
+        function togglePay(orderId, itemIndex) {
+            socket.emit('mark_item_paid', { orderId, itemIndex });
+        }
+
+        function resolveWaiter(orderId, event) {
+            event.stopPropagation(); // specific click on bell
+            if (confirm("Marquer la demande de service comme traitée ?")) {
+                socket.emit('resolve_waiter_call', orderId);
+            }
+        }
+
+        function closeTable(orderId) {
+            if (confirm('Close this table and clear order?')) {
+                // Snapshot for history
+                const order = activeOrdersData.find(o => o.orderId === orderId);
+                if (order) {
+                    const validItems = order.items.filter(i => !i.cancelled);
+                    const total = validItems.reduce((sum, i) => sum + i.price, 0);
+
+                    const historyEntry = {
+                        ...order,
+                        status: 'completed',
+                        timestamp: new Date().toLocaleTimeString(),
+                        finalTotal: total
+                    };
+                    historyLog.unshift(historyEntry);
+                }
+
+                socket.emit('close_table', orderId);
+            }
+        }
+
+        // --- History Logic ---
+
+        function openHistory() {
+            renderHistory();
+            document.getElementById('historyModal').style.display = 'block';
+        }
+
+        function closeHistory() {
+            document.getElementById('historyModal').style.display = 'none';
+        }
+
+        function switchTab(tab) {
+            currentHistoryTab = tab;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            renderHistory();
+        }
+
+        // Toast Notification Function
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<i class="fas fa-exclamation-circle"></i>${message}`;
+            document.body.appendChild(toast);
+
+            // Remove after 3 seconds
+            setTimeout(() => {
+                toast.style.animation = 'slideOutToast 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('history-list');
+            list.innerHTML = '';
+
+            const filtered = historyLog.filter(h => h.status === currentHistoryTab);
+
+            if (filtered.length === 0) {
+                list.innerHTML = `<div class="empty-state" style="padding:20px;">No ${currentHistoryTab} transactions found.</div>`;
+                return;
+            }
+
+            filtered.forEach(entry => {
+                // Generate item list
+                const itemsHtml = entry.items.map(item => {
+                    let icon = '⬜';
+                    let style = ''; // Default style
+
+                    if (item.cancelled) {
+                        icon = '❌';
+                        style = 'text-decoration: line-through; opacity: 0.5; color: #ef4444;';
+                    } else if (item.isPaid) {
+                        icon = '✅';
+                        style = 'color: #10b981;';
+                    }
+
+                    return `
+                        <div style="display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.05); ${style}">
+                            <span>${icon} ${item.name}</span>
+                            <span>${item.price}</span>
+                        </div>`;
+                }).join('');
+
+                list.innerHTML += `
+                    <div class="history-card">
+                        <div class="history-header">
+                            <div>
+                                <div style="font-weight:bold; font-size:1.1rem;">Table ${entry.tableNumber || entry.table}</div>
+                                <div style="font-size:0.85rem; color:#94a3b8;">#${(entry.shortId || entry.orderId).toString().slice(-4)} • ${entry.timestamp}</div>
+                            </div>
+                            <div class="history-total">
+                                ${entry.finalTotal ? entry.finalTotal.toFixed(2) + ' DH' : 'VOID'}
+                            </div>
+                        </div>
+                        <div style="font-size:0.9rem;">
+                            ${itemsHtml}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Window click to close modal
+        window.onclick = function (event) {
+            const modal = document.getElementById('historyModal');
+            if (event.target == modal) {
+                closeHistory();
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,625 +1,1060 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="de">
 
 <head>
-    <title>SyncStay | Menu</title>
+    <title>Der Gasthof • Speisekarte</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --bg: #0b0b0f;
-            --card: #18181b;
-            --text: #fff;
-            --primary: #FF4757;
-            --blue: #3742fa;
-            --green: #2ed573;
-            --yellow: #f59e0b;
+            --bg: #050505;
+            --surface: #121212;
+            --surface-light: #1a1a1a;
+            --surface-lighter: #242424;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --text-tertiary: #6a6a6a;
+            --accent-gold: #FFD700;
+            --accent-emerald: #10B981;
+            --accent-blue: #3B82F6;
+            --accent-red: #EF4444;
+            --accent-yellow: #F59E0B;
+            --glass-bg: rgba(18, 18, 18, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
         }
 
-        body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
+        * {
             margin: 0;
-            padding-bottom: 120px;
+            padding: 0;
+            box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
 
-        .hero {
-            padding: 20px;
-            background: linear-gradient(to bottom, transparent, var(--bg)), url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80') center/cover;
-            height: 200px;
-            display: flex;
-            align-items: flex-end;
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            min-height: 100vh;
+            padding-bottom: 100px;
         }
 
-        .table-badge {
-            background: rgba(0, 0, 0, 0.6);
-            padding: 8px 16px;
-            border-radius: 20px;
-            border: 1px solid #333;
-            font-weight: bold;
-            cursor: pointer;
-            backdrop-filter: blur(10px);
-        }
-
-        .categories {
-            display: flex;
-            gap: 10px;
-            padding: 15px 20px;
-            overflow-x: auto;
-            background: rgba(11, 11, 15, 0.95);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            border-bottom: 1px solid #333;
-        }
-
-        .cat-btn {
-            background: var(--card);
-            padding: 10px 20px;
-            border-radius: 30px;
-            border: 1px solid #333;
-            color: #888;
-            font-weight: bold;
-            white-space: nowrap;
-            transition: 0.2s;
-        }
-
-        .cat-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .menu-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-            padding: 20px;
-        }
-
-        .card {
-            background: var(--card);
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1px solid #27272a;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .card img {
-            height: 180px;
-            object-fit: cover;
-            width: 100%;
-        }
-
-        .card-content {
-            padding: 15px;
-        }
-
-        .price-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 10px;
-        }
-
-        .add-btn {
-            background: #333;
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: none;
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* FAB & Modals */
-        .fab-container {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            display: flex;
-            gap: 10px;
-            z-index: 100;
-        }
-
-        .fab-btn {
-            padding: 18px;
-            border-radius: 18px;
-            font-weight: 800;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-
-        #tracker-btn {
-            flex: 1;
-            background: var(--card);
-            border: 1px solid #333;
-            display: none;
-        }
-
-        #tracker-btn.active {
-            display: flex;
-            background: var(--blue);
-            border-color: var(--blue);
-        }
-
-        #cart-btn {
-            flex: 2;
-            background: var(--primary);
-            justify-content: space-between;
-            display: none;
-        }
-
-        .modal-overlay {
+        /* Top Glass Bar */
+        .top-bar {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 200;
-            display: none;
-            align-items: flex-end;
+            right: 0;
+            height: 60px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 1000;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .modal-overlay.open {
+        .logo {
+            font-weight: 900;
+            font-size: 24px;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--accent-gold), #FFA500);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .top-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .table-pill {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            color: var(--accent-gold);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .waiter-btn,
+        .cart-btn {
+            background: transparent;
+            border: 1px solid var(--accent-emerald);
+            color: var(--accent-emerald);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .cart-btn {
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+        }
+
+        .waiter-btn:active,
+        .cart-btn:active {
+            transform: scale(0.95);
+        }
+
+        .waiter-btn.pulsing {
+            animation: pulse-green 2s infinite;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: var(--accent-gold);
+            color: #000;
+            width: 20px;
+            height: 20px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 800;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cart-badge.show {
             display: flex;
         }
 
-        .sheet {
-            background: #1E1E24;
-            width: 100%;
-            max-height: 85vh;
-            border-radius: 25px 25px 0 0;
-            padding: 25px;
-            overflow-y: auto;
+        /* Category Pills */
+        .category-bar {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 12px 20px;
+            z-index: 999;
+            overflow-x: auto;
+            white-space: nowrap;
+            border-bottom: 1px solid var(--glass-border);
         }
 
-        /* Options Styling */
+        .category-bar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-pills {
+            display: inline-flex;
+            gap: 8px;
+        }
+
+        .category-pill {
+            background: var(--surface-light);
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .category-pill.active {
+            background: var(--accent-gold);
+            color: #000;
+            border-color: var(--accent-gold);
+            font-weight: 700;
+        }
+
+        /* Product Grid */
+        .product-grid {
+            padding: 140px 20px 100px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .product-card {
+            background: var(--surface);
+            border-radius: 24px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid var(--glass-border);
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .product-card:active {
+            transform: scale(0.98);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background: linear-gradient(to bottom, transparent 40%, rgba(0, 0, 0, 0.8) 100%);
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+        }
+
+        .product-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .product-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .product-price {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--accent-gold);
+        }
+
+        .add-button {
+            width: 44px;
+            height: 44px;
+            border-radius: 22px;
+            background: var(--accent-gold);
+            border: none;
+            color: #000;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .add-button:active {
+            transform: scale(0.9);
+        }
+
+        /* Backdrop Overlay */
+        .sheet-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1099;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .sheet-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Bottom Sheets */
+        .bottom-sheet {
+            position: fixed;
+            bottom: -100%;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            border-radius: 28px 28px 0 0;
+            z-index: 1100;
+            padding: 24px 20px 40px;
+            transition: bottom 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.5);
+            max-height: 90vh;
+            overflow-y: auto;
+            touch-action: pan-y;
+        }
+
+        .bottom-sheet.active {
+            bottom: 0;
+        }
+
+        /* Sheet Header (Scrollable with content) */
+        .sheet-header {
+            position: relative;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+        }
+
+        .sheet-close-btn {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+            background: var(--surface-lighter);
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 20;
+        }
+
+        .sheet-close-btn:hover {
+            background: var(--surface-light);
+            border-color: var(--text-tertiary);
+            color: var(--text-primary);
+            transform: scale(1.05);
+        }
+
+        .sheet-close-btn:active {
+            transform: scale(0.95);
+        }
+
+        .sheet-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        /* Dynamic Island Tracker */
+        .dynamic-island {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            padding: 12px 24px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            z-index: 999;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            min-width: 200px;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .dynamic-island.active {
+            display: flex;
+            animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .dynamic-island.ready {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: var(--accent-emerald);
+            animation: pulse-ready 2s infinite;
+        }
+
+        .tracker-status {
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        .tracker-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--text-tertiary);
+            border-top-color: var(--accent-gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Options Sheet */
+        .option-section {
+            margin-bottom: 24px;
+        }
+
         .section-title {
             font-size: 12px;
-            color: #888;
+            font-weight: 700;
+            color: var(--text-tertiary);
             text-transform: uppercase;
-            margin: 20px 0 10px 0;
-            font-weight: 800;
             letter-spacing: 1px;
+            margin-bottom: 12px;
         }
 
-        .option-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #333;
-        }
-
-        .extra-price {
-            color: var(--green);
-            font-size: 12px;
-            font-weight: bold;
-            background: rgba(46, 213, 115, 0.1);
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
-
-        /* Tracker Styling */
-        .status-item {
-            background: #2a2a35;
+        .option-item {
+            padding: 16px;
+            background: var(--surface-light);
             border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border: 1px solid #333;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.2s;
         }
 
-        .status-header {
+        .option-item.selected {
+            background: rgba(255, 215, 0, 0.1);
+            border-color: var(--accent-gold);
+        }
+
+        .option-name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .option-price {
+            color: var(--accent-emerald);
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .option-checkbox {
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            border: 2px solid var(--text-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .option-checkbox.selected {
+            background: var(--accent-gold);
+            border-color: var(--accent-gold);
+        }
+
+        .option-checkbox.selected::after {
+            content: '✓';
+            color: #000;
+            font-weight: 900;
+            font-size: 12px;
+        }
+
+        /* Cart Sheet */
+        .cart-item {
+            padding: 16px;
+            background: var(--surface-light);
+            border-radius: 16px;
+            margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            padding-bottom: 10px;
         }
 
-        .order-id {
-            font-weight: 900;
+        .cart-item-info h4 {
+            font-weight: 700;
             font-size: 16px;
-            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .cart-item-mods {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .cart-item-price {
+            font-weight: 700;
+            color: var(--accent-gold);
+            font-size: 16px;
+        }
+
+        .cart-remove {
+            color: var(--danger);
+            background: transparent;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-top: 1px solid var(--glass-border);
+            margin-top: 20px;
+        }
+
+        .cart-total-text {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .cart-total-amount {
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--accent-gold);
+        }
+
+        .confirm-button {
+            width: 100%;
+            padding: 20px;
+            background: var(--accent-gold);
+            border: none;
+            border-radius: 20px;
+            color: #000;
+            font-weight: 800;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 20px;
+        }
+
+        .confirm-button:active {
+            transform: scale(0.98);
+        }
+
+        /* Tracker Sheet */
+        .order-tracker {
+            background: var(--surface-light);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .tracker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .tracker-id {
+            font-weight: 900;
+            font-size: 18px;
+            color: var(--accent-gold);
+        }
+
+        .tracker-badge {
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 12px;
+            text-transform: uppercase;
             letter-spacing: 0.5px;
+        }
+
+        .badge-waiting {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+        }
+
+        .badge-cooking {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--accent-yellow);
+        }
+
+        .badge-ready {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--accent-emerald);
+        }
+
+        .badge-cancelled {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
         }
 
         .progress-track {
             height: 6px;
-            background: #333;
+            background: var(--surface-lighter);
             border-radius: 3px;
             overflow: hidden;
-            margin: 15px 0;
+            margin: 16px 0;
         }
 
         .progress-fill {
             height: 100%;
-            background: var(--blue);
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-emerald));
             width: 5%;
-            transition: width 2s ease-in-out;
+            transition: width 2s ease;
             border-radius: 3px;
         }
 
-        .status-badge {
-            font-size: 11px;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .order-items {
+            margin-top: 20px;
         }
 
-        .status-badge.waiting {
-            background: rgba(255, 255, 255, 0.1);
-            color: #aaa;
+        .order-item {
+            padding: 12px;
+            background: var(--surface-lighter);
+            border-radius: 12px;
+            margin-bottom: 8px;
         }
 
-        .status-badge.cooking {
-            background: rgba(245, 158, 11, 0.2);
-            color: var(--yellow);
+        .order-item.cancelled {
+            opacity: 0.5;
+            text-decoration: line-through;
         }
 
-        .status-badge.ready {
-            background: rgba(46, 213, 115, 0.2);
-            color: var(--green);
-        }
-
-        .cancel-btn {
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 12px;
-            float: right;
-            cursor: pointer;
-        }
-
-        /* Cancelled Item Styles */
-        .item-cancelled {
-            text-decoration: line-through !important;
-            opacity: 0.6;
-        }
-
-        .item-cancelled * {
-            color: #ef4444 !important;
-            text-decoration: line-through !important;
-        }
-
-        .cancelled-badge {
-            background: #ef4444;
-            color: white;
-            padding: 4px 10px;
-            border-radius: 15px;
-            font-size: 10px;
-            font-weight: bold;
-            margin-left: 8px;
-            text-transform: uppercase;
-        }
-
-        /* Toast */
-        #toast {
-            visibility: hidden;
-            min-width: 250px;
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            border-radius: 50px;
-            padding: 16px;
-            position: fixed;
-            z-index: 2000;
-            left: 50%;
-            bottom: 100px;
-            transform: translateX(-50%);
-            font-size: 14px;
-            opacity: 0;
-            transition: 0.3s;
-        }
-
-        #toast.show {
-            visibility: visible;
-            opacity: 1;
-            bottom: 110px;
-        }
-
-        /* Cart Items */
-        .cart-item {
+        .item-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid #333;
+            align-items: flex-start;
+            margin-bottom: 8px;
         }
 
-        .cart-item:last-child {
-            border-bottom: none;
+        .item-name {
+            font-weight: 700;
+            font-size: 15px;
         }
 
-        /* Premium Animations */
-        @keyframes progressComplete {
-            from {
-                width: 50%;
-            }
-
-            to {
-                width: 100%;
-            }
-        }
-
-        @keyframes fadeOutUp {
-            from {
-                opacity: 1;
-                transform: translateY(0);
-            }
-
-            to {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-        }
-
-        @keyframes slideInNotification {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        @keyframes bounce {
-            from {
-                transform: translateY(0);
-            }
-
-            to {
-                transform: translateY(-5px);
-            }
-        }
-
-        .premium-notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px 25px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            z-index: 1000;
-            animation: slideInNotification 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            max-width: 350px;
-            font-family: 'Inter', sans-serif;
-            border-left: 4px solid #ffd700;
-        }
-
-        .premium-notification h4 {
-            margin: 0 0 8px 0;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .premium-notification p {
-            margin: 0;
+        .item-price {
+            color: var(--accent-gold);
+            font-weight: 700;
             font-size: 14px;
-            opacity: 0.9;
         }
 
-        .notification-icon {
-            animation: bounce 0.5s infinite alternate;
-        }
-
-        .window-minimize {
-            animation: fadeOutUp 0.5s ease-out forwards;
-            pointer-events: none;
-        }
-
-        .order-tray {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 999;
+        /* New flexbox container for price and cancel button */
+        .item-price-row {
             display: flex;
-            gap: 10px;
+            align-items: center;
+            gap: 12px;
         }
 
-        .tray-icon {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, #4CAF50, #2E7D32);
-            border-radius: 12px;
+        .item-cancel {
+            background: rgba(255, 69, 58, 0.2);
+            border: 1px solid rgba(255, 69, 58, 0.3);
+            color: #FF453A;
+            width: 32px;
+            height: 32px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 20px;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s;
+            font-size: 14px;
+            transition: all 0.2s;
+            flex-shrink: 0;
         }
 
-        .tray-icon:hover {
-            transform: scale(1.1);
+        .item-cancel:hover {
+            background: rgba(255, 69, 58, 0.3);
+            border-color: rgba(255, 69, 58, 0.5);
+            transform: scale(1.05);
+        }
+
+        .item-cancel:active {
+            transform: scale(0.9);
+        }
+
+        .item-mods {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .tracker-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .action-button {
+            flex: 1;
+            padding: 16px;
+            border-radius: 16px;
+            border: none;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .cancel-button {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .close-button {
+            background: var(--surface-light);
+            color: var(--text-primary);
+            border: 1px solid var(--glass-border);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: var(--surface);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 16px 24px;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 14px;
+            z-index: 1200;
+            opacity: 0;
+            transition: all 0.3s;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Animations */
+        @keyframes slideUp {
+            from {
+                transform: translateX(-50%) translateY(100px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulse-green {
+            0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+
+        @keyframes pulse-ready {
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(16, 185, 129, 0);
+            }
+
+            50% {
+                box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive */
+        @media (min-width: 600px) {
+            .product-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
 
 <body>
-
-    <div id="toast">Ajouté au panier</div>
-    <div class="hero">
-        <div>
-            <h1>SyncStay</h1>
-            <div class="table-badge" onclick="openModal('tableModal')">📍 Table <span
-                    id="current-table-display">1</span></div>
-        </div>
-    </div>
-
-    <div class="categories-wrapper">
-        <div class="categories">
-            <div class="cat-btn active" onclick="filterMenu('all', this)">🔥 Tout</div>
-            <div class="cat-btn" onclick="filterMenu('burger', this)">🍔 Burgers</div>
-            <div class="cat-btn" onclick="filterMenu('taco', this)">🌮 Tacos</div>
-            <div class="cat-btn" onclick="filterMenu('side', this)">🍟 Sides</div>
-            <div class="cat-btn" onclick="filterMenu('drink', this)">🥤 Boissons</div>
-        </div>
-    </div>
-
-    <div class="menu-grid" id="menu"></div>
-
-    <div id="fab-container" class="fab-container">
-        <div id="tracker-btn" class="fab-btn" onclick="openModal('trackerModal')">⏱️ Suivi</div>
-        <div id="cart-btn" class="fab-btn" onclick="openModal('cartModal')">
-            <span>Panier (<span id="cart-count">0</span>)</span>
-            <span id="cart-total">0 DH</span>
-        </div>
-    </div>
-
-    <div id="tableModal" class="modal-overlay" onclick="closeModal('tableModal')">
-        <div class="sheet" onclick="event.stopPropagation()">
-            <h2>Choisir votre Table</h2>
-            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px;">
-                <script>for (let i = 1; i <= 12; i++) document.write(`<div style="background:#333; padding:15px; border-radius:10px; text-align:center; font-weight:bold; cursor:pointer;" onclick="setTable(${i})">${i}</div>`)</script>
+    <div class="top-bar">
+        <div class="logo">SyncStay</div>
+        <div class="top-right">
+            <div class="table-pill" id="tablePill">
+                <i class="fas fa-chair"></i>
+                Tisch <span id="currentTable">1</span>
             </div>
+            <button class="cart-btn" id="cartBtn" onclick="openCart()">
+                <i class="fas fa-shopping-bag"></i>
+                <div class="cart-badge" id="cartBadge">0</div>
+            </button>
+            <button class="waiter-btn" id="waiterBtn" onclick="callWaiter()">
+                <i class="fas fa-bell"></i>
+            </button>
         </div>
     </div>
 
-    <div id="optionsModal" class="modal-overlay" onclick="closeModal('optionsModal')">
-        <div class="sheet" onclick="event.stopPropagation()">
-            <h2 id="opt-title">Personnaliser</h2>
-            <div id="opt-list"></div>
-            <div style="display:flex; gap:10px; margin-top:20px;">
-                <button
-                    style="flex:1; padding:15px; background:#333; border:none; border-radius:15px; color:white; font-weight:bold;"
-                    onclick="addToCart(false)">Ajouter</button>
-                <button
-                    style="flex:2; padding:15px; background:var(--primary); border:none; border-radius:15px; color:white; font-weight:bold;"
-                    onclick="addToCart(true)">🚀 Commander</button>
-            </div>
-            <div style="text-align:center; margin-top:15px; color:#888;">Total: <span id="livePrice"
-                    style="color:white; font-weight:bold">0</span> DH</div>
+    <div class="category-bar">
+        <div class="category-pills">
+            <div class="category-pill active" onclick="filterMenu('all', this)">🔥 Alle</div>
+            <div class="category-pill" onclick="filterMenu('burger', this)">🍔 Burger</div>
+            <div class="category-pill" onclick="filterMenu('classic', this)">🇩🇪 Klassiker</div>
+            <div class="category-pill" onclick="filterMenu('beilagen', this)">🥔 Beilagen</div>
+            <div class="category-pill" onclick="filterMenu('getranke', this)">🍺 Getränke</div>
         </div>
     </div>
 
-    <div id="cartModal" class="modal-overlay" onclick="closeModal('cartModal')">
-        <div class="sheet" onclick="event.stopPropagation()">
-            <h2>Votre Panier</h2>
-            <div id="cart-list"></div>
-            <button
-                style="width:100%; padding:15px; background:var(--primary); border:none; border-radius:15px; color:white; font-weight:bold; margin-top:20px;"
-                onclick="sendBatchOrder()">Confirmer & Envoyer</button>
+    <div class="product-grid" id="productGrid"></div>
+
+    <div class="dynamic-island" id="dynamicIsland">
+        <div class="tracker-icon">
+            <div class="spinner" id="trackerSpinner"></div>
+            <i class="fas fa-check" id="trackerCheck" style="display:none;"></i>
+        </div>
+        <div class="tracker-status" id="trackerStatus">Bestätigung...</div>
+    </div>
+
+    <div class="sheet-backdrop" id="sheetBackdrop" onclick="closeAllSheets()"></div>
+
+    <div class="bottom-sheet" id="optionsSheet">
+        <button class="sheet-close-btn" onclick="closeSheet('optionsSheet')" aria-label="Close">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="sheet-header">
+            <h2 class="sheet-title" id="optionsTitle">Anpassen</h2>
+        </div>
+        <div id="optionsList"></div>
+        <div class="cart-total" style="margin-top: 30px; padding-top: 30px;">
+            <div class="cart-total-text">Gesamt</div>
+            <div class="cart-total-amount" id="livePrice">0 €</div>
+        </div>
+        <div style="display:flex; gap:12px; margin-top:20px;">
+            <button class="action-button close-button" onclick="closeSheet('optionsSheet')">Abbrechen</button>
+            <button class="action-button" style="background:var(--accent-gold);color:#000;"
+                onclick="addToCart(false)">Zum Warenkorb hinzufügen</button>
         </div>
     </div>
 
-    <div id="trackerModal" class="modal-overlay" onclick="closeModal('trackerModal')">
-        <div class="sheet" onclick="event.stopPropagation()">
-            <h2>Suivi de Commande</h2>
-            <p style="color:#888; font-size:13px; margin-bottom:20px;">Annulation possible pendant 20 secondes.</p>
-            <div id="tracker-list"></div>
+    <div class="bottom-sheet" id="cartSheet">
+        <button class="sheet-close-btn" onclick="closeSheet('cartSheet')" aria-label="Close">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="sheet-header">
+            <h2 class="sheet-title">Ihr Warenkorb</h2>
+        </div>
+        <div id="cartList"></div>
+        <div class="cart-total">
+            <div class="cart-total-text">Gesamt</div>
+            <div class="cart-total-amount" id="cartTotal">0 €</div>
+        </div>
+        <button class="confirm-button" onclick="sendBatchOrder()">
+            Bestellen • <span id="cartCount">0</span> Artikel
+        </button>
+    </div>
+
+    <div class="bottom-sheet" id="trackerSheet">
+        <button class="sheet-close-btn" onclick="closeSheet('trackerSheet')" aria-label="Close">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="sheet-header">
+            <h2 class="sheet-title">Bestellungsverfolgung</h2>
+        </div>
+        <div id="trackerList"></div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <div class="bottom-sheet" id="tableSheet">
+        <button class="sheet-close-btn" onclick="closeSheet('tableSheet')" aria-label="Close">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="sheet-header">
+            <h2 class="sheet-title">Wählen Sie Ihren Tisch</h2>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:20px;">
+            <script>
+                for (let i = 1; i <= 12; i++) {
+                    document.write(`<div style="background:var(--surface-light); padding:20px; border-radius:16px; text-align:center; font-weight:700; cursor:pointer; border:2px solid transparent; transition:all 0.2s;" 
+                    onclick="setTable(${i})" 
+                    onmouseover="this.style.borderColor='var(--accent-gold)'" 
+                    onmouseout="this.style.borderColor='transparent'">${i}</div>`);
+                }
+            </script>
         </div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
+        // Product data - Premium German Restaurant
         const products = {
-            "burger_cheese": {
-                name: "Cheese Burger",
-                price: 45,
+            "burger_klassiker": {
+                name: "Der Klassiker Burger",
+                price: 14.90,
                 cat: "burger",
-                img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600",
-                desc: "Bœuf, Cheddar, Oignons",
+                img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&fit=crop",
+                desc: "Rindfleisch, Cheddar, Speck, Röstzwiebeln",
                 options: {
-                    sauces: ["Biggy", "Algérienne", "Ketchup"],
-                    extras: [{ name: "Extra Fromage", price: 5 }, { name: "Double Viande", price: 15 }],
-                    removals: ["Oignons", "Cornichons"]
+                    sauces: ["Senf", "Ketchup", "Mayonnaise", "Remoulade", "Rahmsoße"],
+                    extras: [{ name: "Extra Käse", price: 1.50 }, { name: "Doppelt Fleisch", price: 4.00 }],
+                    removals: ["Ohne Zwiebeln", "Ohne Speck", "Ohne Käse"]
                 }
             },
-            "burger_chicken": {
-                name: "Chicken Burger",
-                price: 40,
+            "burger_laugen": {
+                name: "Laugen-Burger",
+                price: 16.50,
                 cat: "burger",
-                img: "https://th.bing.com/th/id/OIP.uKRUzQO7CYf7A9M-xBopbwHaFj?w=600",
-                desc: "Poulet Pané, Salade",
+                img: "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=600&fit=crop",
+                desc: "In Laugenbrötchen, Bergkäse, Ruccola",
                 options: {
-                    sauces: ["Mayo", "Poivre", "Andalouse"],
-                    extras: [{ name: "Extra Fromage", price: 5 }],
-                    removals: ["Salade", "Tomate"]
+                    sauces: ["Senf", "Kräutermayonnaise", "Rahmsoße"],
+                    extras: [{ name: "Avocado", price: 2.00 }, { name: "Speck", price: 2.50 }],
+                    removals: ["Ohne Ruccola", "Ohne Zwiebeln"]
                 }
             },
-            "tacos_poulet": {
-                name: "Tacos Poulet",
-                price: 35,
-                cat: "taco",
-                img: "https://th.bing.com/th/id/OIP.iGJje7Zjk7L0SLf9gLgQjAHaF7?w=600",
-                desc: "Poulet mariné, Frites",
+            "burger_bbq": {
+                name: "BBQ Bacon Burger",
+                price: 17.50,
+                cat: "burger",
+                img: "https://th.bing.com/th/id/OIP.hT7bKrMCXgilPN1Hpdh-VQHaEJ?w=333&h=187&c=7&r=0&o=7&dpr=1.4&pid=1.7&rm=3",
+                desc: "BBQ-Sauce, Cheddar, Speck, Zwiebelringe",
                 options: {
-                    sauces: ["Algérienne", "Samouraï", "Curry"],
-                    extras: [{ name: "Gratiné", price: 10 }, { name: "Supp. Viande", price: 10 }],
-                    removals: ["Frites"]
+                    sauces: ["BBQ-Sauce", "Chipotle", "Knoblauchsoße"],
+                    extras: [{ name: "Extra Speck", price: 2.50 }, { name: "Pulled Pork", price: 4.50 }],
+                    removals: ["Ohne Speck", "Ohne Zwiebeln"]
                 }
             },
-            "tacos_viande": {
-                name: "Tacos Viande",
-                price: 45,
-                cat: "taco",
-                img: "https://th.bing.com/th/id/OIP.fQztu6Kj7m5V7AoqYa_CHgHaE8?w=600",
-                desc: "Viande Hachée",
+            "classic_currywurst": {
+                name: "Berliner Currywurst",
+                price: 12.50,
+                cat: "classic",
+                img: "https://knack-rucksack.fr/wp-content/uploads/2022/10/currywurst-berlin.jpg",
+                desc: "Mit Pommes Frites und Currysoße",
                 options: {
-                    sauces: ["Biggy", "Harissa"],
-                    extras: [{ name: "Gratiné", price: 10 }],
-                    removals: ["Frites"]
+                    sauces: ["Senf", "Ketchup", "Curry", "Scharf"],
+                    extras: [{ name: "Extra Pommes", price: 3.00 }, { name: "Bratwurst dazu", price: 5.50 }],
+                    removals: ["Ohne Pommes", "Ohne Soße"]
                 }
             },
-            "frites": {
-                name: "Frites",
-                price: 15,
-                cat: "side",
-                img: "https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?w=600",
-                desc: "Portion de frites",
+            "classic_schnitzel": {
+                name: "Wiener Schnitzel",
+                price: 22.90,
+                cat: "classic",
+                img: "https://die-frau-am-grill.de/wp-content/uploads/wiener-schnitzel-rezept.jpg",
+                desc: "Kalbsschnitzel mit Kartoffelsalat",
                 options: {
-                    sauces: ["Ketchup", "Mayo"],
-                    extras: [{ name: "Cheddar Fondu", price: 10 }]
+                    sauces: ["Zitrone", "Preiselbeeren", "Rahmsoße"],
+                    extras: [{ name: "Spiegelei", price: 2.00 }, { name: "Bratkartoffeln statt Salat", price: 0 }],
+                    removals: ["Ohne Kartoffelsalat", "Ohne Zitrone"]
                 }
             },
-            "nuggets": {
-                name: "Nuggets x6",
-                price: 25,
-                cat: "side",
-                img: "https://th.bing.com/th/id/OIP.l6aRSoyIQa_AGIqa6tC0hwHaE8?w=600",
-                desc: "6 pièces",
-                options: { sauces: ["Barbecue", "Curry"] }
+            "classic_spaetzle": {
+                name: "Käsespätzle",
+                price: 14.50,
+                cat: "classic",
+                img: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=600&fit=crop",
+                desc: "Mit gerösteten Zwiebeln und Salat",
+                options: {
+                    sauces: ["Röstzwiebeln extra", "Schnittlauch"],
+                    extras: [{ name: "Speckwürfel", price: 2.50 }, { name: "Extra Käse", price: 2.00 }],
+                    removals: ["Ohne Zwiebeln", "Ohne Salat"]
+                }
             },
-            "coca_zero": {
-                name: "Coca Zero",
-                price: 15,
-                cat: "drink",
-                img: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=600",
-                desc: "Canette 33cl",
-                options: { removals: ["Glaçons", "Citron"] }
+            "beilagen_pommes": {
+                name: "Pommes Frites",
+                price: 4.50,
+                cat: "beilagen",
+                img: "https://img.freepik.com/premium-photo/french-fries-photography-restaurant_929907-175.jpg",
+                desc: "Knusprige Pommes, rot-weiß",
+                options: {
+                    sauces: ["Ketchup", "Mayonnaise", "Currysoße", "Tartarsoße"],
+                    extras: [{ name: "Mit Käse überbacken", price: 2.00 }]
+                }
+            },
+            "beilagen_bratkartoffeln": {
+                name: "Bratkartoffeln",
+                price: 5.50,
+                cat: "beilagen",
+                img: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=600&fit=crop",
+                desc: "Mit Speck und Zwiebeln",
+                options: {
+                    sauces: ["Kräuterquark", "Senf"],
+                    extras: [{ name: "Spiegelei", price: 2.00 }],
+                    removals: ["Ohne Speck", "Ohne Zwiebeln"]
+                }
+            },
+            "beilagen_gurkensalat": {
+                name: "Gurkensalat",
+                price: 4.00,
+                cat: "beilagen",
+                img: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&fit=crop",
+                desc: "Mit Dill und Sahne",
+                options: {
+                    removals: ["Ohne Dill", "Ohne Zwiebeln"]
+                }
+            },
+            "getranke_spezi": {
+                name: "Paulaner Spezi",
+                price: 3.50,
+                cat: "getranke",
+                img: "https://shop.getraenke-baerlin.de/media/6b/d5/89/1605390458/SPEZI_K_05l_FRONTAL_mit_FLASCHE_150dpi_RGB_2001.jpg",
+                desc: "0,33l Glasflasche",
+                options: { removals: ["Ohne Eiswürfel", "Ohne Strohhalm"] }
+            },
+            "getranke_apfelschorle": {
+                name: "Apfelschorle",
+                price: 3.20,
+                cat: "getranke",
+                img: "https://thirstytales.com/wp-content/uploads/2024/09/Apple-Cider-Sparkler-Mocktail-Recipe-768x768.jpeg",
+                desc: "Apfelsaft mit Sprudelwasser",
+                options: { removals: ["Ohne Eiswürfel"] }
+            },
+            "getranke_helles": {
+                name: "Helles Bier",
+                price: 4.90,
+                cat: "getranke",
+                img: "https://www.verywellfit.com/thmb/hsC5kq_hZZBrcSqsRyeh9n3HESw=/2121x1414/filters:fill(FFDB5D,1)/GettyImages-675621379-5be1ebb246e0fb00266d70b0.jpg",
+                desc: "0,5l vom Fass",
+                options: { removals: ["Ohne Schaum"] }
+            },
+            "getranke_weizen": {
+                name: "Alkoholfreies Weizen",
+                price: 4.50,
+                cat: "getranke",
+                img: "https://img.freepik.com/premium-photo/beer-glass-wooden-table-pub-restaurant_29409-63.jpg",
+                desc: "0,5l alkoholfrei",
+                options: { removals: ["Ohne Zitrone"] }
             }
         };
 
+        // State variables
         let socket;
         try {
             socket = io();
@@ -634,15 +1069,33 @@
         let cart = [], activeOrders = [], currentKey = "", basePrice = 0;
         let tableNum = localStorage.getItem('staySync_table') || "1";
 
+        // Initialize
         window.onload = function () {
-            document.getElementById("current-table-display").innerText = tableNum;
+            document.getElementById("currentTable").innerText = tableNum;
             renderMenu('all');
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-            document.querySelector('.cat-btn').classList.add('active');
+            updateCartUI();
+
+            // Set active category
+            document.querySelectorAll('.category-pill').forEach(b => b.classList.remove('active'));
+            document.querySelector('.category-pill').classList.add('active');
         };
 
+        // Table selection
+        document.getElementById('tablePill').addEventListener('click', () => {
+            openSheet('tableSheet');
+        });
+
+        function setTable(n) {
+            tableNum = n;
+            document.getElementById("currentTable").innerText = n;
+            localStorage.setItem('staySync_table', n);
+            closeSheet('tableSheet');
+            showToast(`Tisch ${n} ausgewählt`);
+        }
+
+        // Menu rendering
         function renderMenu(cat) {
-            const grid = document.getElementById("menu");
+            const grid = document.getElementById("productGrid");
             if (!grid) return;
 
             grid.innerHTML = "";
@@ -652,97 +1105,234 @@
                 if (cat !== 'all' && p.cat !== cat) continue;
 
                 grid.innerHTML += `
-                    <div class="card">
-                        <img src="${p.img}" alt="${p.name}">
-                        <div class="card-content">
-                            <h3>${p.name}</h3>
-                            <p>${p.desc}</p>
-                            <div class="price-row">
-                                <span style="font-weight:bold; font-size:18px;">${p.price} DH</span>
-                                <button class="add-btn" onclick="openProduct('${key}')">+</button>
+                    <div class="product-card" onclick="openProduct('${key}')">
+                        <img src="${p.img}" alt="${p.name}" class="product-image">
+                        <div class="image-overlay"></div>
+                        <div class="product-info">
+                            <h3 class="product-title">${p.name}</h3>
+                            <p class="product-desc">${p.desc}</p>
+                            <div class="product-footer">
+                                <div class="product-price">${p.price.toFixed(2)} €</div>
+                                <button class="add-button" onclick="event.stopPropagation(); openProduct('${key}')">+</button>
                             </div>
                         </div>
                     </div>`;
             }
         }
 
+        function filterMenu(cat, btn) {
+            document.querySelectorAll('.category-pill').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderMenu(cat);
+        }
+
+        // Product options
         function openProduct(key) {
+            // Reset state first to clear any previous selections
+            resetProductState();
+
             currentKey = key;
             const p = products[key];
             basePrice = p.price;
 
+            document.getElementById("optionsTitle").innerText = p.name;
+
             let html = "";
             if (p.options) {
                 if (p.options.sauces) {
-                    html += `<div class="section-title">Sauces (Max 2)</div>`;
+                    html += `<div class="option-section">
+                        <div class="section-title">Soßen (Max 2)</div>`;
                     p.options.sauces.forEach(s => {
-                        html += `<div class="option-row"><label>${s}</label><input type="checkbox" value="${s}" class="sauce-check"></div>`;
+                        html += `<div class="option-item" onclick="toggleOption(this, '${s}')">
+                            <div class="option-name">${s}</div>
+                            <div class="option-checkbox"></div>
+                        </div>`;
                     });
+                    html += `</div>`;
                 }
                 if (p.options.extras) {
-                    html += `<div class="section-title">Extras</div>`;
+                    html += `<div class="option-section">
+                        <div class="section-title">Extras</div>`;
                     p.options.extras.forEach(ex => {
-                        html += `<div class="option-row"><label>${ex.name} <span class="extra-price">+${ex.price}</span></label><input type="checkbox" value="${ex.name}" data-price="${ex.price}" class="extra-check" onchange="updatePrice()"></div>`;
+                        html += `<div class="option-item" onclick="toggleOption(this, '${ex.name}', ${ex.price})">
+                            <div class="option-name">${ex.name}</div>
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <div class="option-price">+${ex.price.toFixed(2)} €</div>
+                                <div class="option-checkbox"></div>
+                            </div>
+                        </div>`;
                     });
+                    html += `</div>`;
                 }
                 if (p.options.removals) {
-                    html += `<div class="section-title">Enlever</div>`;
+                    html += `<div class="option-section">
+                        <div class="section-title">Weglassen</div>`;
                     p.options.removals.forEach(r => {
-                        html += `<div class="option-row"><label style="color:#ef4444">SANS ${r}</label><input type="checkbox" value="SANS ${r}" class="remove-check"></div>`;
+                        html += `<div class="option-item" onclick="toggleOption(this, '${r}')">
+                            <div class="option-name" style="color:var(--danger)">${r}</div>
+                            <div class="option-checkbox"></div>
+                        </div>`;
                     });
+                    html += `</div>`;
                 }
             }
 
-            document.getElementById("opt-title").innerText = p.name;
-            document.getElementById("opt-list").innerHTML = html || "<p style='text-align:center;color:#666;margin-top:20px'>Aucune option</p>";
+            document.getElementById("optionsList").innerHTML = html || "<p style='text-align:center;color:var(--text-tertiary);margin-top:20px'>Keine Optionen verfügbar</p>";
             updatePrice();
-            openModal("optionsModal");
+            openSheet("optionsSheet");
+        }
+
+        let selectedOptions = [];
+        let extraPrices = 0;
+
+        // Reset product state to clear sticky selections
+        function resetProductState() {
+            // Clear selection arrays and prices
+            selectedOptions = [];
+            extraPrices = 0;
+
+            // Reset visual state of all checkboxes
+            const optionsSheet = document.getElementById('optionsSheet');
+            if (optionsSheet) {
+                optionsSheet.querySelectorAll('.option-checkbox').forEach(checkbox => {
+                    checkbox.classList.remove('selected');
+                });
+                optionsSheet.querySelectorAll('.option-item').forEach(item => {
+                    item.classList.remove('selected');
+                });
+            }
+
+            // Reset price display to base price (will be updated by updatePrice)
+            if (typeof basePrice === 'number') {
+                updatePrice();
+            }
+        }
+
+        function toggleOption(element, name, price = 0) {
+            const checkbox = element.querySelector('.option-checkbox');
+            const isSelected = checkbox.classList.contains('selected');
+
+            if (isSelected) {
+                checkbox.classList.remove('selected');
+                element.classList.remove('selected');
+                selectedOptions = selectedOptions.filter(opt => opt !== name);
+                if (price > 0) extraPrices -= price;
+            } else {
+                // Check for max sauces
+                // Logic adjusted for German keywords
+                if (name.includes("Soße") || !name.startsWith("Ohne") && !name.includes("Extra") && !name.includes("Käse") && !name.includes("Fleisch")) {
+                    const sauceCount = selectedOptions.filter(opt =>
+                        opt.includes("Soße") || (!opt.startsWith("Ohne") && !opt.includes("Extra") && !opt.includes("Käse") && !opt.includes("Fleisch"))
+                    ).length;
+                    if (sauceCount >= 2) {
+                        showToast("Maximal 2 Soßen erlaubt");
+                        return;
+                    }
+                }
+
+                checkbox.classList.add('selected');
+                element.classList.add('selected');
+                selectedOptions.push(name);
+                if (price > 0) extraPrices += price;
+            }
+
+            updatePrice();
         }
 
         function updatePrice() {
-            let total = basePrice;
-            document.querySelectorAll('.extra-check:checked').forEach(c => {
-                total += parseInt(c.dataset.price) || 0;
-            });
-            document.getElementById("livePrice").innerText = total;
+            let total = basePrice + extraPrices;
+            document.getElementById("livePrice").innerText = total.toFixed(2) + " €";
         }
 
+        // Cart functions
         function addToCart(instant = false) {
             const p = products[currentKey];
-            let finalPrice = parseInt(document.getElementById("livePrice").innerText);
-            let mods = [];
-
-            document.querySelectorAll('.sauce-check:checked').forEach(c => mods.push(c.value));
-            document.querySelectorAll('.extra-check:checked').forEach(c => mods.push(c.value));
-            document.querySelectorAll('.remove-check:checked').forEach(c => mods.push(c.value));
+            let finalPrice = basePrice + extraPrices;
 
             cart.push({
                 name: p.name,
                 price: finalPrice,
                 qty: 1,
-                mods: mods,
+                mods: [...selectedOptions],
                 productKey: currentKey
             });
+
+            // Reset
+            selectedOptions = [];
+            extraPrices = 0;
 
             if (instant) {
                 sendBatchOrder();
             } else {
                 updateCartUI();
-                showToast("Ajouté au panier !");
+                showToast("Zum Warenkorb hinzugefügt!");
             }
-            closeModal("optionsModal");
+            closeSheet("optionsSheet");
         }
 
+        function updateCartUI() {
+            const count = cart.length;
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+
+            document.getElementById("cartCount").innerText = count;
+            document.getElementById("cartTotal").innerText = total.toFixed(2) + " €";
+
+            // Update cart badge in top bar
+            const badge = document.getElementById("cartBadge");
+            if (badge) {
+                badge.innerText = count;
+                if (count > 0) {
+                    badge.classList.add("show");
+                } else {
+                    badge.classList.remove("show");
+                }
+            }
+
+            // Update cart list
+            let html = "";
+            cart.forEach((item, i) => {
+                const modsText = item.mods && item.mods.length > 0 ?
+                    `<div class="cart-item-mods">${item.mods.join(", ")}</div>` : '';
+
+                html += `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <h4>${item.name}</h4>
+                            ${modsText}
+                            <div class="cart-item-price">${item.price.toFixed(2)} €</div>
+                        </div>
+                        <button class="cart-remove" onclick="removeFromCart(${i})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>`;
+            });
+
+            document.getElementById("cartList").innerHTML = html ||
+                '<div style="text-align:center;padding:40px;color:var(--text-tertiary)">Ihr Warenkorb ist leer</div>';
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+            showToast("Artikel entfernt");
+        }
+
+        function openCart() {
+            updateCartUI();
+            openSheet("cartSheet");
+        }
+
+        // Order functions
         function sendBatchOrder() {
             if (cart.length === 0) {
-                showToast("Panier vide !");
+                showToast("Warenkorb ist leer!");
                 return;
             }
 
             sendOrderToServer(cart);
             cart = [];
             updateCartUI();
-            closeModal("cartModal");
+            closeSheet("cartSheet");
         }
 
         function sendOrderToServer(items) {
@@ -755,7 +1345,7 @@
                 shortId: shortId,
                 table: tableNum,
                 items: JSON.parse(JSON.stringify(items)),
-                status: "En attente",
+                status: "In Warteschlange",
                 progress: 5,
                 canCancel: true,
                 timers: {}
@@ -763,53 +1353,83 @@
 
             activeOrders.unshift(orderObj);
             renderTracker();
-            updateCartUI();
+            updateDynamicIsland();
 
             if (socket) {
                 socket.emit('new_order', orderObj);
                 console.log('Order sent to kitchen:', orderId, 'Short ID:', shortId);
             }
 
-            // FIXED: REFINED TIMING LOGIC
+            // Socket listeners
+            socket.on('alert_customer', (data) => {
+                const myOrder = activeOrders.find(o => o.orderId === data.orderId);
 
-            // 1. At 20 seconds: Disable cancellation window
+                if (myOrder) {
+                    if (data.type === 'order') {
+                        showToast("⚠️ Ihre Bestellung wurde von der Küche storniert");
+                        myOrder.status = "Storniert";
+                    } else if (data.type === 'item') {
+                        showToast(`⚠️ Artikel nicht verfügbar: ${data.itemName}`);
+                        if (myOrder.items[data.itemIndex]) {
+                            myOrder.items[data.itemIndex].cancelled = true;
+                        }
+                    }
+
+                    if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+                    readyAudio.play().catch(e => console.log("Audio warning blocked"));
+
+                    renderTracker();
+                    updateDynamicIsland();
+
+                    if (myOrder.status === "Storniert") {
+                        setTimeout(() => {
+                            activeOrders = activeOrders.filter(o => o.orderId !== myOrder.orderId);
+                            renderTracker();
+                            updateDynamicIsland();
+                        }, 5000);
+                    }
+                }
+            });
+
+            // 20s cancellation window
             orderObj.timers.cancelWindow = setTimeout(() => {
                 const o = activeOrders.find(x => x.orderId === orderId);
-                if (o && o.status === "En attente") {
+                if (o && o.status === "In Warteschlange") {
                     o.canCancel = false;
                     console.log(`Order #${shortId}: Cancellation window closed at 20s`);
                     renderTracker();
                 }
             }, 20000);
 
-            // 2. At 30 seconds: Automatically move to cooking state (50%)
+            // 30s auto-cooking
             orderObj.timers.cookingStart = setTimeout(() => {
                 const o = activeOrders.find(x => x.orderId === orderId);
-                if (o && o.status === "En attente") {
-                    o.status = "En cuisine";
+                if (o && o.status === "In Warteschlange") {
+                    o.status = "In Zubereitung";
                     o.progress = 50;
-                    o.canCancel = false; // Ensure cancellation is disabled
+                    o.canCancel = false;
                     console.log(`Order #${shortId}: Auto-moved to cooking at 30s`);
                     renderTracker();
+                    updateDynamicIsland();
                 }
             }, 30000);
         }
 
+        // Order cancellation
         function cancelOrder(id) {
             const order = activeOrders.find(o => o.orderId === id);
             if (order) {
-                // Clear any pending timers
                 if (order.timers.cancelWindow) clearTimeout(order.timers.cancelWindow);
                 if (order.timers.cookingStart) clearTimeout(order.timers.cookingStart);
 
-                // Mark ALL items as cancelled
                 order.items.forEach(item => {
                     item.cancelled = true;
                 });
 
-                order.status = "Annulé";
+                order.status = "Storniert";
                 order.canCancel = false;
                 renderTracker();
+                updateDynamicIsland();
 
                 if (socket) {
                     socket.emit("cancel_order", {
@@ -819,27 +1439,19 @@
                     console.log('Order canceled:', id);
                 }
 
-                // Auto-close: Remove order after short delay
                 setTimeout(() => {
                     activeOrders = activeOrders.filter(o => o.orderId !== id);
                     renderTracker();
-                    showToast('Commande annulée');
-
-                    // Close tracker modal if no more orders
-                    if (activeOrders.length === 0) {
-                        closeModal('trackerModal');
-                    }
-                }, 1500);
+                    updateDynamicIsland();
+                }, 5000);
             }
         }
 
         function cancelOrderItem(orderId, itemIndex) {
             const order = activeOrders.find(o => o.orderId === orderId);
             if (order && order.items[itemIndex] && !order.items[itemIndex].cancelled) {
-                // Mark item as cancelled locally
                 order.items[itemIndex].cancelled = true;
 
-                // Send to server
                 if (socket) {
                     socket.emit("cancel_item", {
                         orderId: orderId,
@@ -850,342 +1462,291 @@
                     console.log('Item canceled:', orderId, 'Index:', itemIndex);
                 }
 
-                // Check if ALL items are now cancelled
                 const allCancelled = order.items.every(item => item.cancelled === true);
                 if (allCancelled) {
-                    // Clear timers
                     if (order.timers.cancelWindow) clearTimeout(order.timers.cancelWindow);
                     if (order.timers.cookingStart) clearTimeout(order.timers.cookingStart);
 
-                    order.status = "Annulé";
+                    order.status = "Storniert";
                     order.canCancel = false;
 
-                    // Auto-close: Remove order after short delay
                     setTimeout(() => {
                         activeOrders = activeOrders.filter(o => o.orderId !== orderId);
                         renderTracker();
-                        showToast('Commande annulée');
-
-                        // Close tracker modal if no more orders
-                        if (activeOrders.length === 0) {
-                            closeModal('trackerModal');
-                        }
-                    }, 1500);
+                        updateDynamicIsland();
+                    }, 5000);
                 }
 
                 renderTracker();
             }
         }
 
-        // FIXED: Socket event listeners with refined status logic
-        if (socket) {
-            // Kitchen marks order as ready
-            socket.on('status_change', (data) => {
-                console.log('Status change received from kitchen:', data);
-                const order = activeOrders.find(o => o.orderId === data.orderId);
-                if (order && order.status !== "Annulé") {
-                    // Clear any pending timers when kitchen interacts
-                    if (order.timers.cancelWindow) clearTimeout(order.timers.cancelWindow);
-                    if (order.timers.cookingStart) clearTimeout(order.timers.cookingStart);
-
-                    // Update status and progress based on kitchen action
-                    order.status = data.status;
-
-                    if (data.status === 'Prêt à être servi') {
-                        order.progress = 100;
-                        console.log(`Order #${order.shortId}: Kitchen marked as ready, progress to 100%`);
-
-                        // Play beep sound
-                        readyAudio.currentTime = 0;
-                        readyAudio.play().catch(e => console.log("Audio error:", e));
-
-                        // Show premium notification
-                        showPremiumNotification(order.shortId);
-
-                        // Animate progress bar and minimize tracker after delay
-                        setTimeout(() => {
-                            // Add minimize animation to tracker modal
-                            const trackerSheet = document.querySelector('#trackerModal .sheet');
-                            if (trackerSheet) {
-                                trackerSheet.classList.add('window-minimize');
-                                setTimeout(() => {
-                                    trackerSheet.classList.remove('window-minimize');
-                                    closeModal('trackerModal');
-                                    addToTray(order);
-                                }, 500);
-                            }
-                        }, 2000);
-
-                        // Remove order after 10 seconds
-                        setTimeout(() => {
-                            activeOrders = activeOrders.filter(o => o.orderId !== data.orderId);
-                            renderTracker();
-                            removeTrayIcon(order.orderId);
-                        }, 10000);
-                    }
-
-                    renderTracker();
-                }
-            });
-        }
-
+        // Tracker rendering
         function renderTracker() {
-            const list = document.getElementById("tracker-list");
-            const btn = document.getElementById("tracker-btn");
-
+            const list = document.getElementById("trackerList");
             if (!list) return;
 
             list.innerHTML = "";
 
-            if (activeOrders.length > 0) {
-                btn.style.display = "flex";
-                btn.classList.add("active");
-            } else {
-                btn.style.display = "none";
-                btn.classList.remove("active");
+            if (activeOrders.length === 0) {
+                list.innerHTML = `
+                    <div style="text-align:center; padding:40px; color:var(--text-tertiary)">
+                        <i class="fas fa-clock" style="font-size:40px; margin-bottom:16px; opacity:0.5;"></i>
+                        <h3 style="margin-bottom:8px;">Keine aktiven Bestellungen</h3>
+                        <p>Ihre Bestellungen erscheinen hier</p>
+                    </div>`;
+                return;
             }
 
             activeOrders.forEach(order => {
-                let badgeClass = "waiting";
-                if (order.status === "En cuisine") badgeClass = "cooking";
-                if (order.status === "Prêt à être servi") badgeClass = "ready";
-                if (order.status === "Annulé") badgeClass = "waiting";
+                let badgeClass = "badge-waiting";
+                let badgeText = order.status;
 
-                let cancelBtn = order.canCancel ?
-                    `<button class="cancel-btn" onclick="cancelOrder(${order.orderId})">Annuler</button>` :
-                    "";
+                if (order.status === "In Zubereitung") {
+                    badgeClass = "badge-cooking";
+                    badgeText = "In Zubereitung";
+                } else if (order.status === "Prêt à être servi") {
+                    badgeClass = "badge-ready";
+                    badgeText = "Bereit zum Servieren";
+                } else if (order.status === "Storniert") {
+                    badgeClass = "badge-cancelled";
+                    badgeText = "Storniert";
+                }
 
                 let itemsHtml = "";
                 if (order.items && Array.isArray(order.items)) {
                     order.items.forEach((item, index) => {
-                        // Format all customization details beautifully
-                        let customizationHtml = "";
-                        if (item.mods && item.mods.length > 0) {
-                            // Group mods by type for better display
-                            const sauces = item.mods.filter(m =>
-                                !m.startsWith("SANS") &&
-                                !m.includes("Extra") &&
-                                !m.includes("Fromage") &&
-                                !m.includes("Viande") &&
-                                !m.includes("Gratiné") &&
-                                !m.includes("Cheddar") &&
-                                !m.includes("Double") &&
-                                !m.includes("Supp.")
-                            );
-
-                            const extras = item.mods.filter(m =>
-                                m.includes("Extra") ||
-                                m.includes("Fromage") ||
-                                m.includes("Viande") ||
-                                m.includes("Gratiné") ||
-                                m.includes("Cheddar") ||
-                                m.includes("Double") ||
-                                m.includes("Supp.")
-                            );
-
-                            const removals = item.mods.filter(m => m.startsWith("SANS"));
-
-                            // Build HTML for each category
-                            if (extras.length > 0) {
-                                customizationHtml += `<div style="color: #2ed573; font-size: 11px; margin-top: 2px; line-height: 1.3;">➕ ${extras.join(", ")}</div>`;
-                            }
-                            if (sauces.length > 0) {
-                                customizationHtml += `<div style="color: #818cf8; font-size: 11px; margin-top: 2px; line-height: 1.3;">🧂 ${sauces.join(", ")}</div>`;
-                            }
-                            if (removals.length > 0) {
-                                customizationHtml += `<div style="color: #ef4444; font-size: 11px; margin-top: 2px; line-height: 1.3;">🚫 ${removals.join(", ")}</div>`;
-                            }
-                        }
-
-                        // Premium trash icon (only visible during cancellation window AND item not cancelled)
-                        const itemCancelBtn = (order.canCancel && !item.cancelled) ?
-                            `<button style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 5px; margin-left: 10px;" 
-                                    onclick="cancelOrderItem(${order.orderId}, ${index})" title="Annuler cet article">
-                                <i class="fas fa-trash-alt"></i>
+                        const cancelled = item.cancelled ? "cancelled" : "";
+                        const cancelBtn = order.canCancel && !item.cancelled ?
+                            `<button class="item-cancel" onclick="cancelOrderItem(${order.orderId}, ${index})">
+                                <i class="fas fa-times"></i>
                             </button>` : "";
 
-                        // Check if item is cancelled for styling
-                        const cancelledClass = item.cancelled ? "item-cancelled" : "";
-                        const cancelledBadge = item.cancelled ? '<span class="cancelled-badge">Annulé</span>' : "";
+                        const modsHtml = item.mods && item.mods.length > 0 ?
+                            `<div class="item-mods">${item.mods.join(", ")}</div>` : "";
 
                         itemsHtml += `
-                            <div class="${cancelledClass}" style="margin-bottom: 12px; padding: 10px; background: ${item.cancelled ? 'rgba(239,68,68,0.1)' : 'rgba(255,255,255,0.03)'}; border-radius: 8px;">
-                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                                    <div style="flex: 1;">
-                                        <div style="font-weight: bold; font-size: 14px; line-height: 1.4;">
-                                            ${item.qty}x ${item.name} ${cancelledBadge}
-                                        </div>
-                                        ${customizationHtml}
+                            <div class="order-item ${cancelled}">
+                                <div class="item-header">
+                                    <div class="item-name">${item.name}</div>
+                                    <div class="item-price-row">
+                                        <div class="item-price">${item.price.toFixed(2)} €</div>
+                                        ${cancelBtn}
                                     </div>
-                                    ${itemCancelBtn}
                                 </div>
+                                ${modsHtml}
                             </div>`;
                     });
                 }
 
                 list.innerHTML += `
-                    <div class="status-item">
-                        <div class="status-header">
-                            <span class="order-id">#${order.shortId}</span>
-                            <div class="status-badge ${badgeClass}">${order.status}</div>
+                    <div class="order-tracker">
+                        <div class="tracker-header">
+                            <div class="tracker-id">#${order.shortId}</div>
+                            <div class="tracker-badge ${badgeClass}">${badgeText}</div>
                         </div>
-                        <div style="color:#888; font-size:12px; margin-bottom:10px;">Table ${order.table}</div>
-                        <div style="margin-bottom: 15px;">
-                            ${itemsHtml}
+                        <div style="color:var(--text-secondary); font-size:14px; margin-bottom:12px;">
+                            Tisch ${order.table}
                         </div>
                         <div class="progress-track">
                             <div class="progress-fill" style="width:${order.progress}%"></div>
                         </div>
-                        <div style="overflow:auto; margin-top:10px;">${cancelBtn}</div>
+                        <div class="order-items">
+                            ${itemsHtml}
+                        </div>
+                        ${order.canCancel ? `
+                            <div class="tracker-actions">
+                                <button class="action-button cancel-button" onclick="cancelOrder(${order.orderId})">
+                                    Bestellung stornieren
+                                </button>
+                            </div>` : ''}
                     </div>`;
             });
         }
 
-        function updateCartUI() {
-            document.getElementById("cart-count").innerText = cart.length;
-            const total = cart.reduce((sum, item) => sum + item.price, 0);
-            document.getElementById("cart-total").innerText = total + " DH";
-            document.getElementById("cart-btn").style.display = cart.length > 0 ? "flex" : "none";
+        // Dynamic Island
+        function updateDynamicIsland() {
+            const island = document.getElementById("dynamicIsland");
+            const status = document.getElementById("trackerStatus");
+            const spinner = document.getElementById("trackerSpinner");
+            const check = document.getElementById("trackerCheck");
 
-            let html = "";
-            cart.forEach((item, i) => {
-                const modsText = item.mods && item.mods.length > 0 ?
-                    `<br><small style="color:#888;">${item.mods.join(", ")}</small>` : "";
-
-                html += `
-                    <div class="cart-item">
-                        <div>
-                            <b>${item.name}</b>
-                            ${modsText}
-                        </div>
-                        <div>
-                            ${item.price} DH
-                            <button style="background:#333;color:red;border:none;padding:5px 10px;border-radius:5px;margin-left:10px;cursor:pointer;" 
-                                    onclick="cart.splice(${i},1);updateCartUI();showToast('Article supprimé')">
-                                X
-                            </button>
-                        </div>
-                    </div>`;
-            });
-
-            document.getElementById("cart-list").innerHTML = html || "<p style='text-align:center;color:#666;padding:20px;'>Panier vide</p>";
-        }
-
-        function setTable(n) {
-            tableNum = n;
-            document.getElementById("current-table-display").innerText = n;
-            localStorage.setItem('staySync_table', n);
-            closeModal("tableModal");
-        }
-
-        function showToast(msg) {
-            const toast = document.getElementById("toast");
-            if (!toast) return;
-
-            toast.innerText = msg;
-            toast.classList.add("show");
-            setTimeout(() => {
-                toast.classList.remove("show");
-            }, 2000);
-        }
-
-        function openModal(id) {
-            const modal = document.getElementById(id);
-            if (modal) modal.classList.add("open");
-        }
-
-        function closeModal(id) {
-            const modal = document.getElementById(id);
-            if (modal) modal.classList.remove("open");
-        }
-
-        function filterMenu(cat, btn) {
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            renderMenu(cat);
-        }
-
-        // Premium notification when order is ready
-        function showPremiumNotification(shortId) {
-            const notification = document.createElement('div');
-            notification.className = 'premium-notification';
-            notification.innerHTML = `
-                <h4>
-                    <span class="notification-icon">✨</span>
-                    🎉 Votre commande est prête !
-                </h4>
-                <p>Notre équipe l'apporte à votre table dans quelques instants.</p>
-                <div style="margin-top: 10px; font-size: 12px; opacity: 0.8; display: flex; align-items: center; gap: 5px;">
-                    <span>Commande #${shortId}</span>
-                    <span>•</span>
-                    <span>Bon appétit ! 🍔</span>
-                </div>
-            `;
-
-            document.body.appendChild(notification);
-
-            // Auto-remove notification after 5 seconds
-            setTimeout(() => {
-                notification.style.transition = 'opacity 0.5s, transform 0.5s';
-                notification.style.opacity = '0';
-                notification.style.transform = 'translateX(100%)';
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.parentNode.removeChild(notification);
-                    }
-                }, 500);
-            }, 5000);
-        }
-
-        // Add order to tray when window minimizes
-        function addToTray(order) {
-            // Create tray if it doesn't exist
-            let tray = document.querySelector('.order-tray');
-            if (!tray) {
-                tray = document.createElement('div');
-                tray.className = 'order-tray';
-                document.body.appendChild(tray);
-            }
-
-            // Check if icon already exists
-            if (document.querySelector(`.tray-icon[data-order-id="${order.orderId}"]`)) {
+            if (activeOrders.length === 0) {
+                island.classList.remove("active");
                 return;
             }
 
-            // Add tray icon
-            const trayIcon = document.createElement('div');
-            trayIcon.className = 'tray-icon';
-            trayIcon.innerHTML = '📦';
-            trayIcon.title = `Commande #${order.shortId} - Prête`;
-            trayIcon.setAttribute('data-order-id', order.orderId);
+            island.classList.add("active");
+            const latestOrder = activeOrders[0];
 
-            // Restore tracker when clicked
-            trayIcon.addEventListener('click', () => {
-                openModal('trackerModal');
-                trayIcon.remove();
+            if (latestOrder.status === "Prêt à être servi") {
+                island.classList.add("ready");
+                status.textContent = "Bestellung fertig!";
+                spinner.style.display = "none";
+                check.style.display = "block";
+                check.className = "fas fa-check";
+            } else if (latestOrder.status === "In Zubereitung") {
+                island.classList.remove("ready");
+                status.textContent = "In Zubereitung";
+                spinner.style.display = "block";
+                check.style.display = "none";
+            } else if (latestOrder.status === "Storniert") {
+                status.textContent = "Bestellung storniert";
+                spinner.style.display = "none";
+                check.style.display = "block";
+                check.className = "fas fa-times";
+                setTimeout(() => {
+                    island.classList.remove("active");
+                }, 3000);
+            } else {
+                island.classList.remove("ready");
+                status.textContent = "Bestätigung...";
+                spinner.style.display = "block";
+                check.style.display = "none";
+            }
+        }
 
-                // Remove tray if empty
-                if (tray.children.length === 0) {
-                    tray.remove();
+        // Socket events
+        if (socket) {
+            socket.on('status_change', (data) => {
+                const order = activeOrders.find(o => o.orderId === data.orderId);
+                if (order && order.status !== "Storniert") {
+                    if (order.timers.cancelWindow) clearTimeout(order.timers.cancelWindow);
+                    if (order.timers.cookingStart) clearTimeout(order.timers.cookingStart);
+
+                    order.status = data.status;
+                    order.progress = 100;
+
+                    readyAudio.currentTime = 0;
+                    readyAudio.play().catch(e => console.log("Audio error:", e));
+
+                    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+
+                    renderTracker();
+                    updateDynamicIsland();
+
+                    setTimeout(() => {
+                        activeOrders = activeOrders.filter(o => o.orderId !== data.orderId);
+                        renderTracker();
+                        updateDynamicIsland();
+                    }, 10000);
                 }
             });
-
-            tray.appendChild(trayIcon);
         }
 
-        // Remove tray icon when order is removed
-        function removeTrayIcon(orderId) {
-            const trayIcon = document.querySelector(`.tray-icon[data-order-id="${orderId}"]`);
-            if (trayIcon) {
-                trayIcon.remove();
+        // Waiter call
+        function callWaiter() {
+            if (!socket) {
+                showToast("Verbindungsfehler");
+                return;
             }
 
-            // Remove tray if empty
-            const tray = document.querySelector('.order-tray');
-            if (tray && tray.children.length === 0) {
-                tray.remove();
+            const currentOrder = activeOrders[0];
+            const tableNum = document.getElementById("currentTable").innerText;
+
+            const payload = {
+                orderId: currentOrder ? currentOrder.orderId : null,
+                tableNumber: tableNum
+            };
+
+            socket.emit('call_waiter', payload);
+            showToast("🔔 Kellner gerufen");
+
+            const btn = document.getElementById("waiterBtn");
+            btn.classList.add("pulsing");
+            btn.innerHTML = '<i class="fas fa-check"></i>';
+
+            setTimeout(() => {
+                btn.classList.remove("pulsing");
+                btn.innerHTML = '<i class="fas fa-bell"></i>';
+            }, 30000);
+        }
+
+        // UI Helpers
+        function openSheet(id) {
+            // Close any other open sheets first
+            document.querySelectorAll('.bottom-sheet').forEach(sheet => {
+                sheet.classList.remove('active');
+            });
+
+            // Open the requested sheet
+            document.getElementById(id).classList.add("active");
+
+            // Show backdrop
+            const backdrop = document.getElementById('sheetBackdrop');
+            if (backdrop) {
+                backdrop.classList.add('active');
             }
         }
+
+        function closeSheet(id) {
+            // Reset product state when closing options sheet
+            if (id === 'optionsSheet') {
+                resetProductState();
+            }
+
+            document.getElementById(id).classList.remove("active");
+
+            // Check if any sheets are still open
+            const anySheetOpen = Array.from(document.querySelectorAll('.bottom-sheet')).some(
+                sheet => sheet.classList.contains('active')
+            );
+
+            // Hide backdrop if no sheets are open
+            if (!anySheetOpen) {
+                const backdrop = document.getElementById('sheetBackdrop');
+                if (backdrop) {
+                    backdrop.classList.remove('active');
+                }
+            }
+        }
+
+        function closeAllSheets() {
+            // Close all bottom sheets
+            document.querySelectorAll('.bottom-sheet').forEach(sheet => {
+                sheet.classList.remove('active');
+            });
+
+            // Hide backdrop
+            const backdrop = document.getElementById('sheetBackdrop');
+            if (backdrop) {
+                backdrop.classList.remove('active');
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.classList.add("show");
+
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 3000);
+        }
+
+        // Make functions globally available
+        window.openProduct = openProduct;
+        window.openCart = openCart;
+        window.openTracker = () => {
+            renderTracker();
+            openSheet("trackerSheet");
+        };
+        window.setTable = setTable;
+        window.filterMenu = filterMenu;
+        window.addToCart = addToCart;
+        window.sendBatchOrder = sendBatchOrder;
+        window.callWaiter = callWaiter;
+        window.cancelOrder = cancelOrder;
+        window.cancelOrderItem = cancelOrderItem;
+        window.removeFromCart = removeFromCart;
+        window.closeSheet = closeSheet;
+
+        // Add cart icon to dynamic island when clicked
+        document.getElementById('dynamicIsland').addEventListener('click', () => {
+            if (activeOrders.length > 0) {
+                openTracker();
+            }
+        });
     </script>
 </body>
 

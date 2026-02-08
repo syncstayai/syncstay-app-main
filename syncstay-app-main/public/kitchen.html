@@ -82,14 +82,6 @@
             background: var(--red);
         }
 
-        .ticket.order-canceled::before {
-            background: var(--red);
-        }
-
-        .ticket.order-canceled .t-footer {
-            background: rgba(239, 68, 68, 0.1);
-        }
-
         .t-header {
             background: #202025;
             padding: 15px 20px;
@@ -160,24 +152,6 @@
             color: #e4e4e7;
         }
 
-        .item-row.canceled .item-name {
-            color: var(--red) !important;
-            text-decoration: line-through !important;
-        }
-
-        .item-row.canceled .qty {
-            background: rgba(239, 68, 68, 0.2) !important;
-            color: var(--red) !important;
-        }
-
-        .canceled-label {
-            color: var(--red);
-            font-size: 11px;
-            font-weight: bold;
-            margin-left: 5px;
-            text-transform: uppercase;
-        }
-
         .mods {
             margin-top: 8px;
             margin-left: 38px;
@@ -217,12 +191,12 @@
             padding: 15px;
             background: #202025;
             border-top: 1px solid #27272a;
-            display: flex;
-            gap: 10px;
         }
 
-        .btn {
-            flex: 1;
+        .btn-ready {
+            width: 100%;
+            background: var(--text);
+            color: black;
             border: none;
             padding: 14px;
             font-size: 14px;
@@ -231,26 +205,11 @@
             cursor: pointer;
             text-transform: uppercase;
             letter-spacing: 1px;
-            transition: all 0.2s;
-            color: white;
+            transition: transform 0.2s, background 0.2s;
         }
 
-        .btn-ready {
-            background: var(--text);
-            color: black;
-        }
-
-        .canceled-order-label {
-            width: 100%;
-            background: var(--red);
-            color: white;
-            padding: 14px;
-            border-radius: 10px;
-            text-align: center;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: not-allowed;
+        .btn-ready:active {
+            transform: scale(0.98);
         }
 
         @keyframes slideIn {
@@ -300,6 +259,52 @@
             animation: bounce 1s infinite;
         }
 
+        /* NEW: Cancellation Buttons Styling */
+        .btn-icon {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .btn-cancel-order {
+            color: #71717a;
+            /* Subtle gray initially */
+        }
+
+        .btn-cancel-order:hover {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            transform: scale(1.1);
+        }
+
+        .btn-cancel-item {
+            color: #52525b;
+            font-size: 14px;
+            margin-left: auto;
+            /* Push to right */
+        }
+
+        .btn-cancel-item:hover {
+            color: #ef4444;
+            transform: scale(1.2);
+        }
+
+        /* Cancelled Item State in Kitchen */
+        .item-row.cancelled {
+            opacity: 0.5;
+            text-decoration: line-through;
+        }
+
+        .item-row.cancelled .btn-cancel-item {
+            display: none;
+        }
+
         @keyframes bounce {
 
             0%,
@@ -310,6 +315,151 @@
             50% {
                 transform: translateY(-10px);
             }
+        }
+
+        /* History Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: #202025;
+            margin: 5% auto;
+            padding: 25px;
+            border: 1px solid #333;
+            width: 80%;
+            max-width: 800px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .close-history {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-history:hover,
+        .close-history:focus {
+            color: white;
+        }
+
+        .history-list {
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #333;
+            transition: background 0.2s;
+        }
+
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .status-done {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--green);
+        }
+
+        .status-cancelled {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--red);
+        }
+
+        .history-btn {
+            background: #27272a;
+            border: 1px solid #3f3f46;
+            color: #d4d4d8;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            margin-left: 15px;
+        }
+
+        .history-btn:hover {
+            background: #3f3f46;
+            color: white;
+        }
+
+        /* Allergy/Special Note Alert */
+        .allergy-alert {
+            background: rgba(239, 68, 68, 0.15);
+            border-left: 3px solid #ef4444;
+            padding: 10px 12px;
+            margin: 8px 0;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .allergy-alert-icon {
+            color: #ef4444;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .allergy-alert-text {
+            color: #fca5a5;
+            font-weight: 800;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 1.4;
+        }
+
+        /* Premium Cancellation Red Glow */
+        .ticket.cancelled {
+            transition: all 0.3s ease;
+            border: 2px solid #ef4444 !important;
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.6) !important;
+            /* The Glow */
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .ticket.cancelled .item-name {
+            text-decoration: line-through;
+            color: #ef4444 !important;
+        }
+
+        .btn-cancelled {
+            background: #ef4444 !important;
+            color: white !important;
+            border: none;
+            opacity: 1 !important;
         }
     </style>
 </head>
@@ -324,7 +474,28 @@
 
     <div class="top-bar">
         <div class="app-title"><i class="fas fa-fire" style="color:#ef4444;"></i> AFFICHAGE CUISINE</div>
-        <div style="font-size: 12px; color: #888;">Commandes actives: <span id="active-count">0</span></div>
+        <div style="display:flex; align-items:center;">
+            <div style="font-size: 12px; color: #888; margin-right: 20px;">Commandes actives: <span
+                    id="active-count">0</span></div>
+            <button class="history-btn" onclick="openHistory()">
+                <i class="fas fa-history"></i> Historique
+            </button>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div id="historyModal" class="modal">
+        <div class="modal-content">
+            <div
+                style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #333; padding-bottom:15px;">
+                <h2 style="margin:0;"><i class="fas fa-history" style="color:#888; margin-right:10px;"></i>Historique
+                </h2>
+                <span class="close-history" onclick="closeHistory()">&times;</span>
+            </div>
+            <div class="history-list" id="historyList">
+                <!-- History Items -->
+            </div>
+        </div>
     </div>
 
     <div id="orders"></div>
@@ -333,12 +504,11 @@
     <script>
         const socket = io();
         const audio = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
-        const cancelAudio = new Audio('https://actions.google.com/sounds/v1/cartoons/cartoon_boing.ogg');
-
         audio.volume = 0.5;
-        cancelAudio.volume = 0.5;
 
         let activeTickets = new Set();
+        let activeOrdersMap = new Map(); // Stores full order data for history
+        let orderHistory = []; // Stores completed/cancelled orders
 
         function enableAudio() {
             audio.play().then(() => {
@@ -347,23 +517,20 @@
             }).catch(e => console.log("Audio preview failed"));
 
             document.getElementById("start-overlay").style.display = "none";
-            socket.emit('request_orders');
         }
 
         socket.on('send_to_kitchen', (data) => {
             console.log('📦 Commande reçue:', data.orderId, 'ID court:', data.shortId);
 
-            if (document.getElementById("ticket-" + data.orderId)) {
-                console.log('Commande existe déjà');
-                return;
-            }
+            // Prevent duplicate tickets if server resends
+            if (document.getElementById("ticket-" + data.orderId)) return;
 
             audio.currentTime = 0;
             audio.play().catch(e => console.log("Audio bloqué"));
 
             let itemsHtml = "";
             if (Array.isArray(data.items)) {
-                data.items.forEach((item, index) => {
+                data.items.forEach((item, index) => { // Added index for cancellation
                     let tags = "";
                     if (item.mods && item.mods.length > 0) {
                         item.mods.forEach(mod => {
@@ -378,166 +545,160 @@
                     }
 
                     itemsHtml += `
-                    <div class="item-row" id="item-${data.orderId}-${index}" data-index="${index}">
+                    <div class="item-row" id="item-${data.orderId}-${index}">
                         <div class="item-header">
                             <div class="qty">${item.qty || 1}</div>
                             <span class="item-name">${item.name}</span>
+                            <button class="btn-icon btn-cancel-item" onclick="cancelItem(${data.orderId}, ${index}, this)" title="Annuler article">
+                                <i class="fas fa-ban"></i>
+                            </button>
                         </div>
                         ${tags ? `<div class="mods">${tags}</div>` : ''}
                     </div>`;
                 });
             }
 
-            const ticketId = "ticket-" + data.orderId;
             const ticket = document.createElement("div");
             ticket.className = "ticket";
-            ticket.id = ticketId;
+            ticket.id = "ticket-" + data.orderId;
             ticket.dataset.startTime = Date.now();
-            ticket.dataset.orderId = data.orderId;
-            ticket.dataset.shortId = data.shortId;
 
             ticket.innerHTML = `
                 <div class="t-header">
                     <div style="display: flex; flex-direction: column; gap: 5px;">
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <span style="font-size: 14px; font-weight: bold; color: #888;">Commande #${data.shortId}</span>
-                            <span class="table-num">${data.table || "?"}</span>
+                            <span style="font-size: 14px; font-weight: bold; color: #888;">#${data.shortId}</span>
+                            <span class="table-num">T-${data.table || "?"}</span>
                         </div>
                         <div style="font-size: 10px; color: #666;">ID: ${data.orderId}</div>
                     </div>
-                    <div class="timer">00:00</div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div class="timer">00:00</div>
+                        <button class="btn-icon btn-cancel-order" onclick="cancelOrder(${data.orderId})" title="Annuler commande">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
                 </div>
                 <div class="t-body">${itemsHtml}</div>
                 <div class="t-footer">
-                    <button class="btn btn-ready" onclick="markOrderReady(${data.orderId}, this)">Prêt</button>
+                    <button class="btn-ready" onclick="markOrderReady(${data.orderId}, this)">PRÊT</button>
                 </div>
             `;
 
-            const ordersContainer = document.getElementById("orders");
-            if (ordersContainer.firstChild) {
-                ordersContainer.insertBefore(ticket, ordersContainer.firstChild);
-            } else {
-                ordersContainer.appendChild(ticket);
-            }
-
+            document.getElementById("orders").appendChild(ticket);
+            document.getElementById("orders").appendChild(ticket);
             activeTickets.add(data.orderId);
+            activeOrdersMap.set(data.orderId, data); // Store data
             updateActiveCount();
-            console.log('Ticket créé:', ticketId, 'Tickets actifs:', activeTickets.size);
         });
 
         socket.on('kitchen_cancel', (data) => {
-            console.log('❌ Commande annulée:', data.orderId, 'ID court:', data.shortId);
             const ticket = document.getElementById("ticket-" + data.orderId);
-            if (ticket) {
-                cancelAudio.currentTime = 0;
-                cancelAudio.play().catch(e => console.log("Audio annulation bloqué"));
+            if (!ticket) return;
 
-                ticket.classList.add('order-canceled');
+            // 1. Visual Reaction (Red & Glow)
+            ticket.classList.add('cancelled');
 
-                const itemRows = ticket.querySelectorAll('.item-row');
-                itemRows.forEach(row => {
-                    row.classList.add('canceled');
-                    const itemName = row.querySelector('.item-name');
-                    if (itemName) {
-                        itemName.innerHTML += ' <span class="canceled-label">(Annulé)</span>';
-                    }
-                });
+            // Cross out items
+            ticket.querySelectorAll('.item-name').forEach(el => {
+                el.style.textDecoration = "line-through";
+                el.style.color = "#ef4444";
+            });
 
-                const footer = ticket.querySelector('.t-footer');
-                if (footer) {
-                    footer.innerHTML = '<div class="canceled-order-label">COMMANDE ANNULÉE</div>';
-                }
+            // Change Button to "ANNULÉ"
+            const btn = ticket.querySelector('.btn-ready');
+            if (btn) {
+                btn.innerHTML = "<i class='fas fa-ban'></i> ANNULÉ";
+                btn.className = "btn-ready btn-cancelled";
+            }
 
-                const timer = ticket.querySelector('.timer');
-                if (timer) timer.style.color = '#ef4444';
+            // Add to History
+            addToHistory(data.orderId, 'cancelled');
 
-                activeTickets.delete(data.orderId);
-                updateActiveCount();
+            // 2. The 3-Second Wait (Chef sees the cancellation)
+            setTimeout(() => {
+                // 3. Disappear
+                ticket.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+                ticket.style.opacity = "0";
+                ticket.style.transform = "translateX(-20px)";
+                setTimeout(() => ticket.remove(), 500);
+            }, 3000);
+        });
+
+        socket.on('kitchen_cancel_item', ({ orderId, itemIndex }) => {
+            console.log('⚠️ Customer canceled item:', orderId, itemIndex);
+            const itemElement = document.getElementById(`item-${orderId}-${itemIndex}`);
+            if (itemElement) {
+                itemElement.style.opacity = '0.5';
+                itemElement.style.textDecoration = 'line-through';
+                itemElement.style.background = 'rgba(239, 68, 68, 0.1)';
             }
         });
 
-        socket.on('kitchen_cancel_item', (data) => {
-            console.log('🔪 Article annulé:', data.orderId, 'Index:', data.itemIndex);
-            const ticket = document.getElementById("ticket-" + data.orderId);
-            if (ticket) {
-                cancelAudio.currentTime = 0;
-                cancelAudio.volume = 0.3;
-                cancelAudio.play().catch(e => console.log("Audio article annulé bloqué"));
 
-                const itemRow = ticket.querySelector(`#item-${data.orderId}-${data.itemIndex}`);
-                if (itemRow && !itemRow.classList.contains('canceled')) {
-                    itemRow.classList.add('canceled');
+        // NEW: Cancel Functions
+        function cancelOrder(orderId) {
+            if (confirm("Annuler toute la commande ?")) {
+                socket.emit('kitchen_reject_order', orderId);
 
-                    const itemName = itemRow.querySelector('.item-name');
-                    if (itemName) {
-                        itemName.innerHTML += ' <span class="canceled-label">(Annulé)</span>';
-                    }
+                // Add to History
+                addToHistory(orderId, 'cancelled');
 
-                    const notification = document.createElement('div');
-                    notification.style.cssText = `
-                        position: absolute;
-                        top: 10px;
-                        right: 10px;
-                        background: rgba(239, 68, 68, 0.9);
-                        color: white;
-                        padding: 5px 10px;
-                        border-radius: 5px;
-                        font-size: 11px;
-                        z-index: 20;
-                        animation: fadeOut 3s forwards;
-                    `;
-                    notification.textContent = `Article annulé: ${data.itemName || 'Article'}`;
-                    ticket.appendChild(notification);
-
+                // Visual feedback: Remove ticket
+                const ticket = document.getElementById("ticket-" + orderId);
+                if (ticket) {
+                    ticket.style.opacity = "0.5";
+                    ticket.style.pointerEvents = "none";
                     setTimeout(() => {
-                        if (notification.parentNode) {
-                            notification.remove();
-                        }
-                    }, 3000);
-                }
-
-                const allItems = ticket.querySelectorAll('.item-row');
-                const canceledItems = ticket.querySelectorAll('.item-row.canceled');
-                if (allItems.length === canceledItems.length) {
-                    console.log('Tous les articles annulés, annulation complète');
-                    ticket.classList.add('order-canceled');
-                    const footer = ticket.querySelector('.t-footer');
-                    if (footer) {
-                        footer.innerHTML = '<div class="canceled-order-label">COMMANDE ANNULÉE</div>';
-                    }
-                    activeTickets.delete(data.orderId);
-                    updateActiveCount();
+                        ticket.remove();
+                        activeTickets.delete(orderId); // FIX: Update counter
+                        activeOrdersMap.delete(orderId);
+                        updateActiveCount();
+                    }, 500);
                 }
             }
-        });
+        }
+
+        function cancelItem(orderId, itemIndex, btn) {
+            if (confirm("Annuler cet article ?")) {
+                socket.emit('kitchen_reject_item', { orderId, itemIndex });
+                // Visual feedback: Strike item
+                const row = document.getElementById(`item-${orderId}-${itemIndex}`);
+                if (row) {
+                    row.classList.add('cancelled');
+                }
+            }
+        }
 
         // FIXED: Function to mark order as ready
         function markOrderReady(orderId, btn) {
+            // Emit to server
+            socket.emit('mark_ready', orderId);
+
+            // Update button
+            btn.innerText = "Servi";
+            btn.disabled = true;
+            btn.style.background = "#10b981";
+            btn.style.color = "white";
+
+            // Add to History
+            addToHistory(orderId, 'done');
+
+            console.log('Commande marquée comme prête:', orderId);
+
+            // Remove ticket after delay
             const ticket = document.getElementById("ticket-" + orderId);
-            if (ticket && !ticket.classList.contains('order-canceled')) {
-                // Emit to server
-                socket.emit('mark_ready', orderId);
-
-                // Update button
-                btn.innerText = "Servi";
-                btn.disabled = true;
-                btn.style.background = "#10b981";
-                btn.style.color = "white";
-
-                console.log('Commande marquée comme prête:', orderId);
-
-                // Remove ticket after delay
+            if (ticket) {
                 setTimeout(() => {
-                    if (ticket.parentNode) {
-                        ticket.style.animation = "slideOut 0.5s ease forwards";
-                        setTimeout(() => {
-                            if (ticket.parentNode) {
-                                ticket.remove();
-                                activeTickets.delete(orderId);
-                                updateActiveCount();
-                            }
-                        }, 500);
-                    }
+                    ticket.style.animation = "slideOut 0.5s ease forwards";
+                    setTimeout(() => {
+                        ticket.remove();
+                        ticket.remove();
+                        activeTickets.delete(orderId);
+                        activeOrdersMap.delete(orderId);
+                        updateActiveCount();
+                    }, 500);
                 }, 1000);
             }
         }
@@ -548,33 +709,72 @@
 
         // Timer Logic
         setInterval(() => {
-            document.querySelectorAll('.ticket:not(.order-canceled)').forEach(t => {
-                if (!t.dataset.startTime) return;
-
+            document.querySelectorAll('.ticket').forEach(t => {
                 const diff = Math.floor((Date.now() - parseInt(t.dataset.startTime)) / 1000);
                 const m = Math.floor(diff / 60).toString().padStart(2, '0');
                 const s = (diff % 60).toString().padStart(2, '0');
-                const timerEl = t.querySelector('.timer');
-                if (timerEl) timerEl.innerText = `${m}:${s}`;
+                t.querySelector('.timer').innerText = `${m}:${s}`;
 
                 t.classList.remove('warning', 'danger');
                 if (diff > 600) t.classList.add('danger');
                 else if (diff > 300) t.classList.add('warning');
             });
-
-            updateActiveCount();
         }, 1000);
 
-        // Add fadeOut animation for notifications
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes fadeOut {
-                0% { opacity: 1; }
-                70% { opacity: 1; }
-                100% { opacity: 0; transform: translateY(-10px); }
+        // History Functions
+        function openHistory() {
+            renderHistory();
+            document.getElementById("historyModal").style.display = "block";
+        }
+
+        function closeHistory() {
+            document.getElementById("historyModal").style.display = "none";
+        }
+
+        function addToHistory(orderId, status) {
+            const order = activeOrdersMap.get(orderId);
+            if (!order) return;
+
+            const entry = {
+                ...order,
+                finalStatus: status,
+                finalTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+            orderHistory.unshift(entry); // Add to top
+        }
+
+        function renderHistory() {
+            const list = document.getElementById("historyList");
+            list.innerHTML = "";
+
+            if (orderHistory.length === 0) {
+                list.innerHTML = "<div style='text-align:center; color:#666; padding:20px;'>Aucun historique</div>";
+                return;
             }
-        `;
-        document.head.appendChild(style);
+
+            orderHistory.forEach(order => {
+                const isDone = order.finalStatus === 'done';
+                const statusText = isDone ? 'Terminé' : 'Annulé';
+                const statusClass = isDone ? 'status-done' : 'status-cancelled';
+
+                list.innerHTML += `
+                    <div class="history-item">
+                        <div>
+                            <div style="font-weight:bold; font-size:16px;">Table ${order.table} <span style="font-size:13px; color:#666; margin-left:10px;">#${order.shortId}</span></div>
+                            <div style="font-size:12px; color:#888; margin-top:5px;">${order.finalTime}</div>
+                        </div>
+                        <div class="status-badge ${statusClass}">${statusText}</div>
+                    </div>`;
+            });
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function (event) {
+            const modal = document.getElementById("historyModal");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
     </script>
 </body>
 
