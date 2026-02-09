@@ -242,6 +242,17 @@ io.on('connection', (socket) => {
             io.emit('manager_update', activeOrders);
         }
     });
+
+    // 11. Re-Sync Client (The "Handshake")
+    socket.on('sync_existing_order', (orderId) => {
+        const order = activeOrders.find(o => o.orderId == orderId);
+        if (order) {
+            console.log(`🔄 Re-syncing client to Order #${order.shortId}`);
+            socket.emit('restore_session', order);
+        } else {
+            socket.emit('session_expired');
+        }
+    });
 });
 
 const PORT = process.env.PORT || 3000;

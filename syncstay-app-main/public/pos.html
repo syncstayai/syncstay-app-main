@@ -712,7 +712,7 @@
                     <div class="card-footer">
                         <div class="total-row">
                             <span>Remaining Due:</span>
-                            <span class="due-amount">${remainingTotal.toFixed(2)} DH</span>
+                            <span class="due-amount">${remainingTotal.toFixed(2)} €</span>
                         </div>
                         <button class="close-btn" onclick="closeTable(${order.orderId})">
                             <i class="fas fa-check-circle"></i> Complete Session
@@ -734,7 +734,15 @@
         }
 
         function renderItem(item, index, orderId) {
-            const drinkKeywords = ['drink', 'coke', 'soda', 'water', 'juice', 'sprite', 'fanta', 'coffee', 'tea', 'beer', 'wine', 'coca'];
+            const drinkKeywords = [
+                // Standard English
+                'drink', 'coke', 'soda', 'water', 'juice', 'sprite', 'fanta', 'coffee', 'tea', 'beer', 'wine', 'coca',
+                // New German Menu Keywords
+                'spezi', 'paulaner',       // For "Paulaner Spezi"
+                'apfelschorle', 'schorle', // For "Apfelschorle"
+                'helles', 'bier',          // For "Helles Bier"
+                'weizen', 'alkoholfreies'  // For "Alkoholfreies Weizen"
+            ];
             const isDrink = drinkKeywords.some(k => item.name.toLowerCase().includes(k));
 
             return `
@@ -854,7 +862,7 @@
                                 <div style="font-size:0.85rem; color:#94a3b8;">#${(entry.shortId || entry.orderId).toString().slice(-4)} • ${entry.timestamp}</div>
                             </div>
                             <div class="history-total">
-                                ${entry.finalTotal ? entry.finalTotal.toFixed(2) + ' DH' : 'VOID'}
+                                ${entry.finalTotal ? entry.finalTotal.toFixed(2) + ' €' : 'VOID'}
                             </div>
                         </div>
                         <div style="font-size:0.9rem;">
