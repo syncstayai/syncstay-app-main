@@ -1101,43 +1101,178 @@
             }
         };
 
-        // State variables
+        // Socket connection with reconnection logic
         let socket;
-        try {
-            socket = io();
-            console.log('Socket connected');
+        let reconnectAttempts = 0;
+        const maxReconnectAttempts = 5;
 
-            // Session restore on connect
-            socket.on('connect', () => {
-                const savedId = localStorage.getItem('syncstay_active_order');
-                if (savedId) {
-                    console.log('🔄 Attempting to restore session for order:', savedId);
-                    socket.emit('sync_existing_order', savedId);
-                }
-            });
+        function connectSocket() {
+            try {
+                socket = io({
+                    reconnection: true,
+                    reconnectionAttempts: maxReconnectAttempts,
+                    reconnectionDelay: 1000,
+                    timeout: 20000
+                });
 
-            socket.on('restore_session', (order) => {
-                console.log('✅ Session restored:', order);
-                // Restore the order to memory
-                activeOrders = [order];
-                // Force the Tracker to open/update immediately
-                renderTracker();
-                updateDynamicIsland();
-                // If canceled, ensure visual state is correct
-                if (order.status === 'Annulé' || order.status === 'Storniert') {
-                    const island = document.getElementById("dynamicIsland");
-                    if (island) island.classList.add("critical");
-                }
-            });
+                console.log('🔄 Connecting to server...');
 
-            socket.on('session_expired', () => {
-                console.log('⚠️ Session expired - clearing localStorage');
-                localStorage.removeItem('syncstay_active_order');
-            });
+                socket.on('connect', () => {
+                    console.log('✅ Socket connected:', socket.id);
+                    reconnectAttempts = 0;
 
-        } catch (e) {
-            console.log("Offline mode");
+                    // Immediately attempt session restoration
+                    const savedOrderId = localStorage.getItem('syncstay_active_order');
+                    if (savedOrderId) {
+                        console.log('🔄 Attempting to restore session:', savedOrderId);
+                        socket.emit('restore_session', savedOrderId);
+                    }
+
+                    // Check for pending orders to sync
+                    const pendingOrders = JSON.parse(localStorage.getItem('syncstay_pending_orders') || '[]');
+                    if (pendingOrders.length > 0) {
+                        console.log('🔄 Syncing pending orders:', pendingOrders.length);
+                        pendingOrders.forEach(order => {
+                            socket.emit('new_order', order);
+                        });
+                        localStorage.removeItem('syncstay_pending_orders');
+                    }
+                });
+
+                socket.on('session_restored', (order) => {
+                    console.log('✅ Session restored:', order.shortId);
+
+                    // Clear any existing orders and add the restored one
+                    activeOrders = [order];
+
+                    // Update UI immediately
+                    renderTracker();
+                    updateDynamicIsland();
+
+                    // If order is ready or cancelled, show appropriate state
+                    if (order.status === 'Prêt à être servi') {
+                        const island = document.getElementById("dynamicIsland");
+                        if (island) {
+                            island.classList.add("ready");
+                            island.classList.remove("critical");
+                        }
+                    } else if (order.status === 'Annulé' || order.status === 'Storniert') {
+                        const island = document.getElementById("dynamicIsland");
+                        if (island) {
+                            island.classList.add("critical");
+                            island.classList.remove("ready");
+                        }
+                    }
+
+                    showToast("Session restored successfully!");
+                });
+
+                socket.on('session_expired', () => {
+                    console.log('⚠️ Session expired');
+                    localStorage.removeItem('syncstay_active_order');
+                    activeOrders = [];
+                    updateDynamicIsland();
+                    showToast("Previous session expired");
+                });
+
+                socket.on('order_confirmed', (data) => {
+                    console.log('✅ Order confirmed by server:', data.shortId);
+                    // The order is already in activeOrders from sendOrderToServer
+                    // Just ensure UI is updated
+                    renderTracker();
+                    updateDynamicIsland();
+                });
+
+                socket.on('status_change', (data) => {
+                    console.log('📊 Status update:', data);
+                    const order = activeOrders.find(o => o.orderId === data.orderId);
+                    if (order) {
+                        order.status = data.status;
+                        order.progress = data.progress || 100;
+
+                        if (data.status === 'Prêt à être servi') {
+                            readyAudio.currentTime = 0;
+                            readyAudio.play().catch(e => console.log("Audio error:", e));
+
+                            if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+
+                            // Auto-remove after 10 seconds
+                            setTimeout(() => {
+                                activeOrders = activeOrders.filter(o => o.orderId !== data.orderId);
+                                localStorage.removeItem('syncstay_active_order');
+                                renderTracker();
+                                updateDynamicIsland();
+                            }, 10000);
+                        }
+
+                        renderTracker();
+                        updateDynamicIsland();
+                    }
+                });
+
+                socket.on('alert_customer', (data) => {
+                    console.log('⚠️ Alert from kitchen:', data);
+
+                    const order = activeOrders.find(o => o.orderId === data.orderId);
+                    if (order) {
+                        if (data.type === 'order') {
+                            showToast("⚠️ Ihre Bestellung wurde von der Küche storniert");
+                            order.status = "Storniert";
+                            order.canCancel = false;
+
+                            // Remove from localStorage when cancelled
+                            localStorage.removeItem('syncstay_active_order');
+
+                            // Auto-remove after user acknowledges
+                            setTimeout(() => {
+                                activeOrders = activeOrders.filter(o => o.orderId !== data.orderId);
+                                renderTracker();
+                                updateDynamicIsland();
+                            }, 10000);
+
+                        } else if (data.type === 'item') {
+                            showToast(`⚠️ Artikel nicht verfügbar: ${data.itemName}`);
+                            if (order.items[data.itemIndex]) {
+                                order.items[data.itemIndex].cancelled = true;
+                            }
+                        }
+
+                        if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+                        readyAudio.play().catch(e => console.log("Audio warning blocked"));
+
+                        renderTracker();
+                        updateDynamicIsland();
+                    }
+                });
+
+                socket.on('status_update', (data) => {
+                    const order = activeOrders.find(o => o.orderId === data.orderId);
+                    if (order && data.hasOwnProperty('canCancel')) {
+                        order.canCancel = data.canCancel;
+                        renderTracker();
+                    }
+                });
+
+                socket.on('disconnect', () => {
+                    console.log('🔌 Socket disconnected');
+                    showToast("Connection lost - reconnecting...");
+                });
+
+                socket.on('connect_error', (error) => {
+                    console.log('❌ Connection error:', error);
+                    reconnectAttempts++;
+                    if (reconnectAttempts >= maxReconnectAttempts) {
+                        showToast("Offline mode - reconnecting when possible");
+                    }
+                });
+
+            } catch (e) {
+                console.log("❌ Socket connection failed:", e);
+            }
         }
+
+        // Initialize connection
+        connectSocket();
 
         const readyAudio = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
         readyAudio.volume = 0.7;
@@ -1155,6 +1290,14 @@
             document.querySelectorAll('.category-pill').forEach(b => b.classList.remove('active'));
             document.querySelector('.category-pill').classList.add('active');
         };
+
+        // Heartbeat to keep connection alive
+        setInterval(() => {
+            if (socket && socket.connected) {
+                socket.emit('ping');
+            }
+        }, 30000);
+
 
         // Table selection
         document.getElementById('tablePill').addEventListener('click', () => {
@@ -1438,116 +1581,73 @@
                 orderId: orderId,
                 shortId: shortId,
                 table: tableNum,
+                tableNumber: tableNum,
                 items: JSON.parse(JSON.stringify(items)),
                 status: "In Warteschlange",
                 progress: 5,
                 canCancel: true,
-                timers: {}
+                createdAt: timestamp
             };
 
-            // Save to localStorage for session persistence
+            // Save to localStorage IMMEDIATELY for persistence
             localStorage.setItem('syncstay_active_order', orderObj.orderId);
+            console.log('💾 Saved order to localStorage:', orderId);
 
             activeOrders.unshift(orderObj);
             renderTracker();
             updateDynamicIsland();
 
-            if (socket) {
+            if (socket && socket.connected) {
                 socket.emit('new_order', orderObj);
-                console.log('Order sent to kitchen:', orderId, 'Short ID:', shortId);
+                console.log('📤 Order sent to server:', shortId);
+            } else {
+                console.log('⚠️ Offline - order saved locally');
+                showToast("Offline - order will sync when connected");
+                // Store locally for when connection resumes
+                const pendingOrders = JSON.parse(localStorage.getItem('syncstay_pending_orders') || '[]');
+                pendingOrders.push(orderObj);
+                localStorage.setItem('syncstay_pending_orders', JSON.stringify(pendingOrders));
             }
-
-            // Socket listeners
-            socket.on('alert_customer', (data) => {
-                const myOrder = activeOrders.find(o => o.orderId === data.orderId);
-
-                if (myOrder) {
-                    if (data.type === 'order') {
-                        showToast("⚠️ Ihre Bestellung wurde von der Küche storniert");
-                        myOrder.status = "Storniert";
-                        myOrder.canCancel = false;  // Disable cancel buttons immediately
-                    } else if (data.type === 'item') {
-                        showToast(`⚠️ Artikel nicht verfügbar: ${data.itemName}`);
-                        if (myOrder.items[data.itemIndex]) {
-                            myOrder.items[data.itemIndex].cancelled = true;
-                        }
-                        // Add critical state for item cancellations
-                        const island = document.getElementById("dynamicIsland");
-                        if (island) {
-                            island.classList.add("critical");
-                            const status = document.getElementById("trackerStatus");
-                            if (status) {
-                                status.innerHTML = `<div style="display:flex; flex-direction:column; align-items:flex-start; line-height:1.2;">
-                                    <span style="font-size:14px; font-weight:700;">⚠️ Achtung</span>
-                                    <span style="font-size:10px; font-weight:400; opacity:0.6;">Tippen zum Ansehen</span>
-                                </div>`;
-                            }
-                        }
-                    }
-
-                    if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-                    readyAudio.play().catch(e => console.log("Audio warning blocked"));
-
-                    renderTracker();
-                    updateDynamicIsland();
-                }
-            });
-
-            // 20s cancellation window
-            orderObj.timers.cancelWindow = setTimeout(() => {
-                const o = activeOrders.find(x => x.orderId === orderId);
-                if (o && o.status === "In Warteschlange") {
-                    o.canCancel = false;
-                    console.log(`Order #${shortId}: Cancellation window closed at 20s`);
-                    renderTracker();
-                }
-            }, 20000);
-
-            // 30s auto-cooking
-            orderObj.timers.cookingStart = setTimeout(() => {
-                const o = activeOrders.find(x => x.orderId === orderId);
-                if (o && o.status === "In Warteschlange") {
-                    o.status = "In Zubereitung";
-                    o.progress = 50;
-                    o.canCancel = false;
-                    console.log(`Order #${shortId}: Auto-moved to cooking at 30s`);
-                    renderTracker();
-                    updateDynamicIsland();
-                }
-            }, 30000);
         }
+
 
         // Order cancellation
         function cancelOrder(id) {
             const order = activeOrders.find(o => o.orderId === id);
-            if (order) {
-                if (order.timers.cancelWindow) clearTimeout(order.timers.cancelWindow);
-                if (order.timers.cookingStart) clearTimeout(order.timers.cookingStart);
-
-                order.items.forEach(item => {
-                    item.cancelled = true;
-                });
-
-                order.status = "Storniert";
-                order.canCancel = false;
-                renderTracker();
-                updateDynamicIsland();
-
-                if (socket) {
-                    socket.emit("cancel_order", {
-                        orderId: id,
-                        shortId: order.shortId
+            if (order && order.canCancel) {
+                if (confirm("Möchten Sie diese Bestellung wirklich stornieren?")) {
+                    order.status = "Storniert";
+                    order.canCancel = false;
+                    order.items.forEach(item => {
+                        item.cancelled = true;
                     });
-                    console.log('Order canceled:', id);
-                }
 
-                setTimeout(() => {
-                    activeOrders = activeOrders.filter(o => o.orderId !== id);
+                    // Remove from localStorage
+                    localStorage.removeItem('syncstay_active_order');
+
                     renderTracker();
                     updateDynamicIsland();
-                }, 5000);
+
+                    if (socket && socket.connected) {
+                        socket.emit("cancel_order", {
+                            orderId: id,
+                            shortId: order.shortId
+                        });
+                        console.log('Order canceled:', id);
+                    }
+
+                    // Auto-remove after 5 seconds
+                    setTimeout(() => {
+                        activeOrders = activeOrders.filter(o => o.orderId !== id);
+                        renderTracker();
+                        updateDynamicIsland();
+                    }, 5000);
+                }
+            } else {
+                showToast("Stornierung nicht mehr möglich");
             }
         }
+
 
         function cancelOrderItem(orderId, itemIndex) {
             const order = activeOrders.find(o => o.orderId === orderId);
@@ -1749,22 +1849,27 @@
 
         // Waiter call
         function callWaiter() {
-            if (!socket) {
-                showToast("Verbindungsfehler");
+            const tableNum = document.getElementById("currentTable").innerText;
+            const currentOrder = activeOrders[0];
+            const savedOrderId = localStorage.getItem('syncstay_active_order');
+
+            const orderId = currentOrder ? currentOrder.orderId : savedOrderId;
+
+            if (!socket || !socket.connected) {
+                showToast("⚠️ Verbindung fehlt - Kellner kann nicht gerufen werden");
                 return;
             }
 
-            const currentOrder = activeOrders[0];
-            const tableNum = document.getElementById("currentTable").innerText;
-
             const payload = {
-                orderId: currentOrder ? currentOrder.orderId : null,
-                tableNumber: tableNum
+                orderId: orderId,
+                tableNumber: tableNum,
+                table: tableNum
             };
 
             socket.emit('call_waiter', payload);
-            showToast("🔔 Kellner gerufen");
+            showToast("🔔 Kellner gerufen - Tisch " + tableNum);
 
+            // Visual feedback
             const btn = document.getElementById("waiterBtn");
             btn.classList.add("pulsing");
             btn.innerHTML = '<i class="fas fa-check"></i>';
@@ -1774,6 +1879,7 @@
                 btn.innerHTML = '<i class="fas fa-bell"></i>';
             }, 30000);
         }
+
 
         // UI Helpers
         function openSheet(id) {

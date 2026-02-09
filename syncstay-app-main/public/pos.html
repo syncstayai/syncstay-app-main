@@ -532,13 +532,13 @@
     <div class="header">
         <div>
             <h1>SyncStay Manager</h1>
-            <div style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 5px;">Live Table Overview</div>
+            <div style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 5px;">Live-Tischübersicht</div>
         </div>
         <div class="live-indicator">
             <button class="history-btn" onclick="openHistory()">
-                <i class="fas fa-history"></i> Transaction History
+                <i class="fas fa-history"></i> Transaktionsverlauf
             </button>
-            <div class="dot" style="margin-left: 15px;"></div> System Active
+            <div class="dot" style="margin-left: 15px;"></div> System Aktiv
         </div>
     </div>
 
@@ -546,13 +546,13 @@
     <div id="historyModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 style="margin:0">Transaction Logs</h2>
+                <h2 style="margin:0">Transaktionsprotokolle</h2>
                 <i class="fas fa-times" style="font-size: 20px; cursor: pointer;" onclick="closeHistory()"></i>
             </div>
             <div class="modal-body">
                 <div class="tabs">
-                    <div class="tab active" onclick="switchTab('completed')">✅ Completed / Paid</div>
-                    <div class="tab" onclick="switchTab('canceled')">🚫 Canceled / Voided</div>
+                    <div class="tab active" onclick="switchTab('completed')">✅ Abgeschlossen / Bezahlt</div>
+                    <div class="tab" onclick="switchTab('canceled')">🚫 Storniert / Ungültig</div>
                 </div>
                 <div id="history-list"></div>
             </div>
@@ -581,7 +581,7 @@
             const shortId = order ? (order.shortId || order.orderId.toString().slice(-4)) : orderId.toString().slice(-4);
 
             // Show toast notification
-            showToast(`Order #${shortId} Canceled`);
+            showToast(`Bestellung #${shortId} storniert`);
 
             const card = Array.from(container.children).find(c => c.dataset.orderId == orderId);
             if (card) {
@@ -592,7 +592,7 @@
                 // Add canceled overlay banner
                 const overlay = document.createElement('div');
                 overlay.style.cssText = 'position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(239,68,68,0.95); color:white; padding:15px 30px; border-radius:12px; font-size:20px; font-weight:bold; z-index:10; letter-spacing:1px;';
-                overlay.textContent = '🚫 CANCELED';
+                overlay.textContent = '🚫 STORNIERT';
                 card.style.position = 'relative';
                 card.appendChild(overlay);
 
@@ -615,7 +615,7 @@
             audio.volume = 0.5;
             audio.play().catch(e => console.log("Audio ignored"));
 
-            showToast(`🔔 Table ${data.tableNumber} is calling!`);
+            showToast(`🔔 Tisch ${data.tableNumber} ruft!`);
 
             // Visual Card Update (If card exists)
             const card = Array.from(container.children).find(c => c.dataset.orderId == data.orderId);
@@ -627,7 +627,7 @@
                     const banner = document.createElement('div');
                     banner.className = 'waiter-alert-banner';
                     banner.onclick = (e) => resolveWaiter(data.orderId, e);
-                    banner.innerHTML = `<i class="fas fa-bell bell-shake"></i><span>SERVICE DEMANDÉ</span>`;
+                    banner.innerHTML = `<i class="fas fa-bell bell-shake"></i><span>SERVICE-RUF</span>`;
                     header.appendChild(banner);
                 }
             }
@@ -689,7 +689,7 @@
                     callingClass = 'calling-server';
                     waiterAlert = `<div class="waiter-alert-banner" onclick="resolveWaiter(${order.orderId}, event)">
                         <i class="fas fa-bell bell-shake"></i>
-                        <span>SERVICE DEMANDÉ</span>
+                        <span>SERVICE-RUF</span>
                     </div>`;
                 }
 
@@ -711,11 +711,11 @@
                     </div>
                     <div class="card-footer">
                         <div class="total-row">
-                            <span>Remaining Due:</span>
+                            <span>Offener Betrag:</span>
                             <span class="due-amount">${remainingTotal.toFixed(2)} €</span>
                         </div>
                         <button class="close-btn" onclick="closeTable(${order.orderId})">
-                            <i class="fas fa-check-circle"></i> Complete Session
+                            <i class="fas fa-check-circle"></i> Sitzung abschließen
                         </button>
                     </div>
                 `;
@@ -728,8 +728,8 @@
             container.innerHTML = `
                 <div class="empty-state">
                     <i class="fas fa-utensils empty-icon"></i>
-                    <h2>No Active Tables</h2>
-                    <p>Orders placed on the app will appear here instantly.</p>
+                    <h2>Keine aktiven Tische</h2>
+                    <p>Bestellungen aus der App erscheinen hier sofort.</p>
                 </div>`;
         }
 
@@ -748,7 +748,7 @@
             return `
                 <div class="item-row ${isDrink ? 'is-drink' : ''} ${item.isPaid ? 'paid' : ''} ${item.cancelled ? 'cancelled-item' : ''}" 
                      onclick="togglePay(${orderId}, ${index})" 
-                     title="${item.cancelled ? 'Item cancelled' : 'Click to toggle paid status'}">
+                     title="${item.cancelled ? 'Artikel storniert' : 'Klicken für Bezahlstatus'}">
                      <div style="display:flex; align-items:center; gap:10px;">
                         ${isDrink ? '<i class="fas fa-glass-cheers" style="color:var(--drink-highlight)"></i>' : '<i class="fas fa-circle" style="font-size:6px; opacity:0.5"></i>'}
                         <span class="item-name">${item.name}</span>
@@ -764,13 +764,13 @@
 
         function resolveWaiter(orderId, event) {
             event.stopPropagation(); // specific click on bell
-            if (confirm("Marquer la demande de service comme traitée ?")) {
+            if (confirm("Serviceanfrage als erledigt markieren?")) {
                 socket.emit('resolve_waiter_call', orderId);
             }
         }
 
         function closeTable(orderId) {
-            if (confirm('Close this table and clear order?')) {
+            if (confirm('Tisch schließen und Bestellung löschen?')) {
                 // Snapshot for history
                 const order = activeOrdersData.find(o => o.orderId === orderId);
                 if (order) {
@@ -829,7 +829,7 @@
             const filtered = historyLog.filter(h => h.status === currentHistoryTab);
 
             if (filtered.length === 0) {
-                list.innerHTML = `<div class="empty-state" style="padding:20px;">No ${currentHistoryTab} transactions found.</div>`;
+                list.innerHTML = `<div class="empty-state" style="padding:20px;">Keine ${currentHistoryTab === 'completed' ? 'abgeschlossenen' : 'stornierten'} Transaktionen gefunden.</div>`;
                 return;
             }
 
