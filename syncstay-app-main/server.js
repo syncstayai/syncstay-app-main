@@ -2,14 +2,52 @@ const express = require('express');
 const http = require('http');
 const { Server } = require("socket.io");
 const path = require('path');
+const fs = require('fs');
+
+// Railway Volumes usually mount to /app/data. Fallback to local dir if missing.
+const DATA_DIR = process.env.RAILWAY_VOLUME_MOUNT_PATH || path.join(__dirname, 'data');
+const HISTORY_FILE = path.join(DATA_DIR, 'history.json');
+
+// Ensure directory exists
+if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+}
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+// Helper: Load History on Startup
+function loadHistory() {
+    try {
+        if (fs.existsSync(HISTORY_FILE)) {
+            const data = fs.readFileSync(HISTORY_FILE, 'utf8');
+            orderHistory = JSON.parse(data);
+            console.log(`📂 Loaded ${orderHistory.length} records from history.`);
+        }
+    } catch (err) {
+        console.error("❌ Failed to load history:", err);
+        orderHistory = []; // Fallback
+    }
+}
+
+// Helper: Save History (Append-Only Logic)
+function saveHistory() {
+    try {
+        // We write the full array to ensure sync.
+        // In a high-scale app, we would append to a stream, but this ensures consistency for now.
+        fs.writeFileSync(HISTORY_FILE, JSON.stringify(orderHistory, null, 2));
+    } catch (err) {
+        console.error("❌ Failed to save history:", err);
+    }
+}
+
 // Store active orders in memory with server-side timers
 let activeOrders = [];
 let orderHistory = [];
+
+// INITIALIZE
+loadHistory();
 
 app.use(express.static('public'));
 
@@ -161,11 +199,12 @@ io.on('connection', (socket) => {
         if (order) {
             const historyEntry = {
                 ...order,
-                finalStatus: 'completed',
+                finalStatus: 'Abgeschlossen',
                 finalTime: new Date().toLocaleTimeString(),
                 finalTotal: order.items.reduce((sum, item) => sum + (item.cancelled ? 0 : item.price), 0)
             };
-            orderHistory.push(historyEntry);
+            orderHistory.unshift(historyEntry);
+            saveHistory(); // <--- Persist to disk
         }
 
         clearOrderTimers(orderId);
@@ -232,11 +271,12 @@ io.on('connection', (socket) => {
             // Store in history
             const historyEntry = {
                 ...order,
-                finalStatus: 'canceled',
+                finalStatus: 'Storniert',
                 finalTime: new Date().toLocaleTimeString(),
                 finalTotal: 0
             };
             orderHistory.push(historyEntry);
+            saveHistory(); // <--- Persist to disk
 
             // Notify kitchen with premium animation
             io.emit('kitchen_cancel', {
@@ -354,6 +394,40 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         console.log('� Client disconnected:', socket.id);
     });
+});
+
+// CSV Export Route
+app.get('/api/export-history', (req, res) => {
+    try {
+        const fields = ['Datum', 'Uhrzeit', 'Bestell-Nr.', 'Tisch', 'Status', 'Gesamt(EUR)', 'Artikel'];
+        const csvRows = [fields.join(',')];
+
+        orderHistory.forEach(order => {
+            // Safe comma handling for CSV
+            const itemsList = order.items.map(i =>
+                `${i.qty}x ${i.name} (${i.cancelled ? 'VOID' : i.price.toFixed(2)})`
+            ).join(' | ').replace(/"/g, '""');
+
+            const row = [
+                new Date(order.createdAt || Date.now()).toLocaleDateString('de-DE'),
+                order.finalTime || '00:00',
+                order.shortId,
+                order.tableNumber,
+                order.finalStatus,
+                (order.finalTotal || 0).toFixed(2),
+                `"${itemsList}"` // Wrap items in quotes
+            ];
+            csvRows.push(row.join(','));
+        });
+
+        const csvString = csvRows.join('\n');
+        res.header('Content-Type', 'text/csv');
+        res.attachment(`SyncStay_Report_${new Date().toISOString().split('T')[0]}.csv`);
+        res.send(csvString);
+    } catch (e) {
+        console.error(e);
+        res.status(500).send("Error generating report");
+    }
 });
 
 // Periodic cleanup of old orders (24 hours)

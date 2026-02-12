@@ -1,0 +1,34 @@
+[
+  {
+    "orderId": 1770738895208,
+    "shortId": "5208",
+    "table": "1",
+    "tableNumber": "1",
+    "items": [
+      {
+        "name": "Der Klassiker Burger",
+        "price": 20.4,
+        "qty": 1,
+        "mods": [
+          "Ketchup",
+          "Mayonnaise",
+          "Extra Käse",
+          "Doppelt Fleisch",
+          "Ohne Käse"
+        ],
+        "productKey": "burger_klassiker",
+        "isPaid": false,
+        "cancelled": false
+      }
+    ],
+    "status": "Prêt à être servi",
+    "progress": 100,
+    "canCancel": false,
+    "createdAt": 1770738895037,
+    "lastUpdated": 1770738931411,
+    "needsWaiter": false,
+    "finalStatus": "Abgeschlossen",
+    "finalTime": "4:55:49 PM",
+    "finalTotal": 20.4
+  }
+]

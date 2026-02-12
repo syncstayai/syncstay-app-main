@@ -547,12 +547,19 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2 style="margin:0">Transaktionsprotokolle</h2>
-                <i class="fas fa-times" style="font-size: 20px; cursor: pointer;" onclick="closeHistory()"></i>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <a href="/api/export-history" target="_blank" style="text-decoration:none;">
+                        <button class="history-btn" style="background:var(--accent); color:white; border:none;">
+                            <i class="fas fa-file-csv"></i> CSV Exportieren
+                        </button>
+                    </a>
+                    <i class="fas fa-times" style="font-size: 20px; cursor: pointer;" onclick="closeHistory()"></i>
+                </div>
             </div>
             <div class="modal-body">
                 <div class="tabs">
-                    <div class="tab active" onclick="switchTab('completed')">✅ Abgeschlossen / Bezahlt</div>
-                    <div class="tab" onclick="switchTab('canceled')">🚫 Storniert / Ungültig</div>
+                    <div class="tab active" onclick="switchTab('Abgeschlossen')">✅ Abgeschlossen / Bezahlt</div>
+                    <div class="tab" onclick="switchTab('Storniert')">🚫 Storniert / Ungültig</div>
                 </div>
                 <div id="history-list"></div>
             </div>
@@ -569,7 +576,7 @@
 
         let activeOrdersData = []; // Store active orders to access via ID
         let historyLog = [];
-        let currentHistoryTab = 'completed';
+        let currentHistoryTab = 'Abgeschlossen';
 
         // Listen for updates
         // NEW: Premium Cancellation Visual Feedback for POS with Toast
@@ -651,11 +658,11 @@
             orders.forEach(o => {
                 if (o.status === 'Annulé') {
                     // Check if already in history to avoid duplication
-                    const exists = historyLog.find(h => h.orderId === o.orderId && h.status === 'canceled');
+                    const exists = historyLog.find(h => h.orderId === o.orderId && h.status === 'Storniert');
                     if (!exists) {
                         const historyEntry = {
                             ...o,
-                            status: 'canceled',
+                            status: 'Storniert',
                             timestamp: new Date().toLocaleTimeString(),
                             finalTotal: 0
                         };
@@ -779,7 +786,7 @@
 
                     const historyEntry = {
                         ...order,
-                        status: 'completed',
+                        status: 'Abgeschlossen',
                         timestamp: new Date().toLocaleTimeString(),
                         finalTotal: total
                     };
@@ -829,7 +836,7 @@
             const filtered = historyLog.filter(h => h.status === currentHistoryTab);
 
             if (filtered.length === 0) {
-                list.innerHTML = `<div class="empty-state" style="padding:20px;">Keine ${currentHistoryTab === 'completed' ? 'abgeschlossenen' : 'stornierten'} Transaktionen gefunden.</div>`;
+                list.innerHTML = `<div class="empty-state" style="padding:20px;">Keine ${currentHistoryTab === 'Abgeschlossen' ? 'abgeschlossenen' : 'stornierten'} Transaktionen gefunden.</div>`;
                 return;
             }
 
