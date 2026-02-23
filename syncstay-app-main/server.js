@@ -3,6 +3,23 @@ const http = require('http');
 const { Server } = require("socket.io");
 const path = require('path');
 const fs = require('fs');
+const mongoose = require('mongoose');
+
+// --- MongoDB (Optional) ---
+const MONGO_URI = process.env.MONGO_URI || null;
+
+const orderSchema = new mongoose.Schema({
+    tenantId: String, orderId: Number, shortId: String, tableNumber: String,
+    items: Array, status: String, finalStatus: String, finalTotal: Number, finalTime: String, createdAt: Date
+});
+const Order = mongoose.model('Order', orderSchema);
+
+if (MONGO_URI) {
+    mongoose.connect(MONGO_URI).then(() => console.log('🟢 MongoDB Connected')).catch(err => console.error('❌ MongoDB Error:', err));
+}
+
+// --- Hardcoded Tenants for Beta ---
+const TENANT_PINS = { "default": "0000", "gasthof": "1234", "berlincafe": "5555" };
 
 // Railway Volumes usually mount to /app/data. Fallback to local dir if missing.
 const DATA_DIR = process.env.RAILWAY_VOLUME_MOUNT_PATH || path.join(__dirname, 'data');
@@ -67,13 +84,15 @@ function setupOrderTimers(order) {
         orderTimers.delete(order.orderId);
     }
 
+    const tenantId = order.tenantId || 'default';
+
     // 20s cancellation window
     const cancelTimer = setTimeout(() => {
         const o = activeOrders.find(x => x.orderId === order.orderId);
         if (o && o.status === "In Warteschlange") {
             o.canCancel = false;
             console.log(`Server: Order #${order.shortId} cancellation window closed at 20s`);
-            io.emit('status_update', { orderId: order.orderId, canCancel: false });
+            io.to(tenantId).emit('status_update', { orderId: order.orderId, canCancel: false });
         }
     }, 20000);
 
@@ -86,7 +105,7 @@ function setupOrderTimers(order) {
             o.canCancel = false;
             console.log(`Server: Order #${order.shortId} auto-moved to cooking at 30s`);
 
-            io.emit('status_change', {
+            io.to(tenantId).emit('status_change', {
                 orderId: order.orderId,
                 status: "In Zubereitung",
                 progress: 50
@@ -108,18 +127,35 @@ function clearOrderTimers(orderId) {
 io.on('connection', (socket) => {
     console.log('🔌 Client connected:', socket.id);
 
-    // Send data immediately upon connection
-    socket.emit('manager_update', activeOrders);
+    // --- Multi-Tenant Auth ---
+    socket.on('authenticate', ({ tenantId, pin }, callback) => {
+        if (TENANT_PINS[tenantId] && TENANT_PINS[tenantId] === pin) {
+            socket.join(tenantId);
+            socket.tenantId = tenantId;
+            socket.isAuthenticated = true;
+            callback({ success: true });
+            socket.emit('manager_update', activeOrders.filter(o => o.tenantId === tenantId));
+        } else {
+            callback({ success: false, message: "Falscher PIN Code" });
+        }
+    });
+
+    socket.on('join_tenant', (tenantId) => {
+        socket.join(tenantId);
+        socket.tenantId = tenantId;
+    });
 
     // 1. Receive New Order from App
     socket.on('new_order', (order) => {
+        const tenantId = order.tenantId || socket.tenantId || 'default';
+        order.tenantId = tenantId;
         order.tableNumber = order.table || order.tableNumber || "?";
         order.createdAt = Date.now();
         order.lastUpdated = Date.now();
         order.canCancel = true;
         order.needsWaiter = false;
 
-        console.log('🍔 New Order from Table:', order.tableNumber, 'ID:', order.shortId);
+        console.log('🍔 New Order from Table:', order.tableNumber, 'ID:', order.shortId, 'Tenant:', tenantId);
 
         // Ensure items have the "isPaid" flag
         order.items = order.items.map(item => ({ ...item, isPaid: false, cancelled: false }));
@@ -131,10 +167,10 @@ io.on('connection', (socket) => {
         setupOrderTimers(order);
 
         // Broadcast to Manager (pos.html)
-        io.emit('manager_update', activeOrders);
+        io.to(tenantId).emit('manager_update', activeOrders.filter(o => o.tenantId === tenantId));
 
         // Broadcast to Kitchen
-        io.emit('send_to_kitchen', order);
+        io.to(tenantId).emit('send_to_kitchen', order);
 
         // Notify customer (for their own order)
         socket.emit('order_confirmed', {
@@ -158,45 +194,52 @@ io.on('connection', (socket) => {
     });
 
     // 3. Mark Item as Paid (Split Bill)
-    socket.on('mark_item_paid', ({ orderId, itemIndex }) => {
+    socket.on('mark_item_paid', ({ orderId, itemIndex, tenantId }) => {
+        const tid = tenantId || socket.tenantId || 'default';
         const order = activeOrders.find(o => o.orderId === orderId);
         if (order && order.items[itemIndex]) {
             order.items[itemIndex].isPaid = !order.items[itemIndex].isPaid;
-            io.emit('manager_update', activeOrders);
+            io.to(tid).emit('manager_update', activeOrders.filter(o => o.tenantId === tid));
         }
     });
 
     // 4. Kitchen: Mark Order Ready
-    socket.on('mark_ready', (orderId) => {
+    socket.on('mark_ready', (data) => {
+        const orderId = typeof data === 'object' ? data.orderId : data;
+        const tenantId = (typeof data === 'object' && data.tenantId) ? data.tenantId : socket.tenantId || 'default';
         console.log('✅ Kitchen marked ready:', orderId);
 
         const order = activeOrders.find(o => o.orderId === orderId);
         if (order) {
             clearOrderTimers(orderId);
+            const tid = order.tenantId || tenantId;
 
             order.status = 'Prêt à être servi';
             order.progress = 100;
             order.lastUpdated = Date.now();
 
             // Notify Customer
-            io.emit('status_change', {
+            io.to(tid).emit('status_change', {
                 orderId: orderId,
                 status: 'Prêt à être servi',
                 shortId: order.shortId
             });
 
             // Sync Manager Dashboard
-            io.emit('manager_update', activeOrders);
+            io.to(tid).emit('manager_update', activeOrders.filter(o => o.tenantId === tid));
         }
     });
 
     // 5. Close Table
-    socket.on('close_table', (orderId) => {
+    socket.on('close_table', (data) => {
+        const orderId = typeof data === 'object' ? data.orderId : data;
+        const tenantId = (typeof data === 'object' && data.tenantId) ? data.tenantId : socket.tenantId || 'default';
         console.log('✅ Closing Table for Order:', orderId);
 
         // Add to history before removing
         const order = activeOrders.find(o => o.orderId === orderId);
         if (order) {
+            const tid = order.tenantId || tenantId;
             const historyEntry = {
                 ...order,
                 finalStatus: 'Abgeschlossen',
@@ -205,61 +248,72 @@ io.on('connection', (socket) => {
             };
             orderHistory.unshift(historyEntry);
             saveHistory(); // <--- Persist to disk
-        }
 
-        clearOrderTimers(orderId);
-        activeOrders = activeOrders.filter(o => o.orderId !== orderId);
-        io.emit('manager_update', activeOrders);
+            // Also save to MongoDB if connected
+            if (MONGO_URI) {
+                new Order(historyEntry).save().catch(err => console.error('MongoDB save error:', err));
+            }
+
+            clearOrderTimers(orderId);
+            activeOrders = activeOrders.filter(o => o.orderId !== orderId);
+            io.to(tid).emit('manager_update', activeOrders.filter(o => o.tenantId === tid));
+        }
     });
 
     // 6. Kitchen: Reject Entire Order
-    socket.on('kitchen_reject_order', (orderId) => {
+    socket.on('kitchen_reject_order', (data) => {
+        const orderId = typeof data === 'object' ? data.orderId : data;
+        const tenantId = (typeof data === 'object' && data.tenantId) ? data.tenantId : socket.tenantId || 'default';
         console.log('❌ Kitchen rejected order:', orderId);
         const order = activeOrders.find(o => o.orderId === orderId);
         if (order) {
+            const tid = order.tenantId || tenantId;
             clearOrderTimers(orderId);
             order.status = 'Annulé';
             order.lastUpdated = Date.now();
 
-            // Broadcast to everyone
-            io.emit('alert_customer', {
+            // Broadcast to everyone in tenant
+            io.to(tid).emit('alert_customer', {
                 type: 'order',
                 orderId: orderId,
                 message: "Commande annulée par la cuisine"
             });
 
             // Update POS immediately
-            io.emit('kitchen_cancel', orderId);
-            io.emit('manager_update', activeOrders);
+            io.to(tid).emit('kitchen_cancel', orderId);
+            io.to(tid).emit('manager_update', activeOrders.filter(o => o.tenantId === tid));
         }
     });
 
     // 7. Kitchen: Reject Specific Item
-    socket.on('kitchen_reject_item', ({ orderId, itemIndex }) => {
+    socket.on('kitchen_reject_item', ({ orderId, itemIndex, tenantId }) => {
+        const tid = tenantId || socket.tenantId || 'default';
         console.log('⚠️ Kitchen rejected item:', orderId, 'Index:', itemIndex);
         const order = activeOrders.find(o => o.orderId === orderId);
         if (order && order.items[itemIndex]) {
             order.items[itemIndex].cancelled = true;
             order.lastUpdated = Date.now();
 
-            io.emit('alert_customer', {
+            io.to(order.tenantId || tid).emit('alert_customer', {
                 type: 'item',
                 orderId: orderId,
                 itemIndex: itemIndex,
                 itemName: order.items[itemIndex].name
             });
 
-            io.emit('manager_update', activeOrders);
+            io.to(order.tenantId || tid).emit('manager_update', activeOrders.filter(o => o.tenantId === (order.tenantId || tid)));
         }
     });
 
     // 8. Customer Cancel Order
     socket.on('cancel_order', (data) => {
         const orderId = typeof data === 'object' ? data.orderId : data;
+        const tenantId = (typeof data === 'object' && data.tenantId) ? data.tenantId : socket.tenantId || 'default';
         console.log('🚫 Customer canceled order:', orderId);
 
         const order = activeOrders.find(o => o.orderId === orderId);
         if (order) {
+            const tid = order.tenantId || tenantId;
             clearOrderTimers(orderId);
             order.status = 'Annulé';
             order.canCancel = false;
@@ -278,18 +332,23 @@ io.on('connection', (socket) => {
             orderHistory.push(historyEntry);
             saveHistory(); // <--- Persist to disk
 
+            // Also save to MongoDB if connected
+            if (MONGO_URI) {
+                new Order(historyEntry).save().catch(err => console.error('MongoDB save error:', err));
+            }
+
             // Notify kitchen with premium animation
-            io.emit('kitchen_cancel', {
+            io.to(tid).emit('kitchen_cancel', {
                 orderId: orderId,
                 shortId: order.shortId
             });
 
             // Update POS
             activeOrders = activeOrders.filter(o => o.orderId !== orderId);
-            io.emit('manager_update', activeOrders);
+            io.to(tid).emit('manager_update', activeOrders.filter(o => o.tenantId === tid));
 
             // Alert customer
-            io.emit('alert_customer', {
+            io.to(tid).emit('alert_customer', {
                 type: 'order',
                 orderId: orderId,
                 message: "Votre commande a été annulée"
@@ -298,10 +357,12 @@ io.on('connection', (socket) => {
     });
 
     // 9. Customer Cancel Item
-    socket.on('cancel_item', ({ orderId, itemIndex }) => {
+    socket.on('cancel_item', ({ orderId, itemIndex, tenantId }) => {
+        const tid = tenantId || socket.tenantId || 'default';
         console.log('⚠️ Customer canceled item:', orderId, 'Index:', itemIndex);
         const order = activeOrders.find(o => o.orderId === orderId);
         if (order && order.items[itemIndex]) {
+            const orderTid = order.tenantId || tid;
             order.items[itemIndex].cancelled = true;
             order.lastUpdated = Date.now();
 
@@ -314,12 +375,12 @@ io.on('connection', (socket) => {
 
                 setTimeout(() => {
                     activeOrders = activeOrders.filter(o => o.orderId !== orderId);
-                    io.emit('manager_update', activeOrders);
+                    io.to(orderTid).emit('manager_update', activeOrders.filter(o => o.tenantId === orderTid));
                 }, 5000);
             }
 
-            io.emit('kitchen_cancel_item', { orderId, itemIndex });
-            io.emit('manager_update', activeOrders);
+            io.to(orderTid).emit('kitchen_cancel_item', { orderId, itemIndex });
+            io.to(orderTid).emit('manager_update', activeOrders.filter(o => o.tenantId === orderTid));
         }
     });
 
@@ -327,8 +388,9 @@ io.on('connection', (socket) => {
     socket.on('call_waiter', (payload) => {
         const orderId = payload.orderId;
         const tableNum = payload.tableNumber || payload.table;
+        const tenantId = payload.tenantId || socket.tenantId || 'default';
 
-        console.log('🔔 Waiter called for Table:', tableNum, 'Order:', orderId);
+        console.log('🔔 Waiter called for Table:', tableNum, 'Order:', orderId, 'Tenant:', tenantId);
 
         let order;
 
@@ -357,22 +419,28 @@ io.on('connection', (socket) => {
                 status: 'Service Demandé',
                 needsWaiter: true,
                 waiterCalledAt: Date.now(),
-                createdAt: Date.now()
+                createdAt: Date.now(),
+                tenantId: tenantId
             };
             activeOrders.push(order);
             console.log(`📝 Created service request for table ${tableNum}`);
         }
 
+        const tid = order.tenantId || tenantId;
+
         // Broadcast to POS with animation
-        io.emit('waiter_call', order);
-        io.emit('manager_update', activeOrders);
+        io.to(tid).emit('waiter_call', order);
+        io.to(tid).emit('manager_update', activeOrders.filter(o => o.tenantId === tid));
     });
 
     // 11. Resolve Waiter Call
-    socket.on('resolve_waiter_call', (orderId) => {
+    socket.on('resolve_waiter_call', (data) => {
+        const orderId = typeof data === 'object' ? data.orderId : data;
+        const tenantId = (typeof data === 'object' && data.tenantId) ? data.tenantId : socket.tenantId || 'default';
         console.log('🔕 Waiter signal resolved:', orderId);
         const order = activeOrders.find(o => o.orderId === orderId);
         if (order) {
+            const tid = order.tenantId || tenantId;
             order.needsWaiter = false;
 
             // Remove empty service requests
@@ -381,7 +449,7 @@ io.on('connection', (socket) => {
                 activeOrders = activeOrders.filter(o => o.orderId !== orderId);
             }
 
-            io.emit('manager_update', activeOrders);
+            io.to(tid).emit('manager_update', activeOrders.filter(o => o.tenantId === tid));
         }
     });
 
@@ -392,21 +460,30 @@ io.on('connection', (socket) => {
 
     // 13. Disconnect handling
     socket.on('disconnect', () => {
-        console.log('� Client disconnected:', socket.id);
+        console.log('🔌 Client disconnected:', socket.id);
     });
 });
 
-// CSV Export Route
-app.get('/api/export-history', (req, res) => {
+// CSV Export Route (Tenant-scoped)
+app.get('/api/export-history/:tenantId', async (req, res) => {
     try {
+        const tenantId = req.params.tenantId;
+        let orders;
+
+        if (MONGO_URI) {
+            orders = await Order.find({ tenantId: tenantId });
+        } else {
+            orders = orderHistory.filter(o => o.tenantId === tenantId);
+        }
+
         const fields = ['Datum', 'Uhrzeit', 'Bestell-Nr.', 'Tisch', 'Status', 'Gesamt(EUR)', 'Artikel'];
         const csvRows = [fields.join(',')];
 
-        orderHistory.forEach(order => {
+        orders.forEach(order => {
             // Safe comma handling for CSV
             const itemsList = order.items.map(i =>
                 `${i.qty}x ${i.name} (${i.cancelled ? 'VOID' : i.price.toFixed(2)})`
-            ).join(' | ').replace(/"/g, '""');
+            ).join(' | ').replace(/\"/g, '""');
 
             const row = [
                 new Date(order.createdAt || Date.now()).toLocaleDateString('de-DE'),
@@ -422,12 +499,17 @@ app.get('/api/export-history', (req, res) => {
 
         const csvString = csvRows.join('\n');
         res.header('Content-Type', 'text/csv');
-        res.attachment(`SyncStay_Report_${new Date().toISOString().split('T')[0]}.csv`);
+        res.attachment(`SyncStay_Report_${tenantId}_${new Date().toISOString().split('T')[0]}.csv`);
         res.send(csvString);
     } catch (e) {
         console.error(e);
         res.status(500).send("Error generating report");
     }
+});
+
+// Keep legacy route for backward compatibility
+app.get('/api/export-history', (req, res) => {
+    res.redirect('/api/export-history/default');
 });
 
 // Periodic cleanup of old orders (24 hours)
@@ -440,4 +522,5 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Server running on port ${PORT}`);
     console.log(`📊 Active orders in memory: ${activeOrders.length}`);
+    console.log(`🏢 Tenants: ${Object.keys(TENANT_PINS).join(', ')}`);
 });

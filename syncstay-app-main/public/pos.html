@@ -524,10 +524,107 @@
                 opacity: 0;
             }
         }
+
+        /* Auth Overlay */
+        #auth-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(25px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+
+        .auth-card {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .auth-card h2 {
+            color: white;
+            margin-bottom: 20px;
+            font-weight: 800;
+        }
+
+        .pin-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 32px;
+            text-align: center;
+            letter-spacing: 15px;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            outline: none;
+            font-family: monospace;
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 16px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .shake {
+            animation: shake 0.4s cubic-bezier(.36, .07, .19, .97) both;
+        }
+
+        @keyframes shake {
+
+            10%,
+            90% {
+                transform: translate3d(-2px, 0, 0);
+            }
+
+            20%,
+            80% {
+                transform: translate3d(4px, 0, 0);
+            }
+
+            30%,
+            50%,
+            70% {
+                transform: translate3d(-6px, 0, 0);
+            }
+
+            40%,
+            60% {
+                transform: translate3d(6px, 0, 0);
+            }
+        }
     </style>
 </head>
 
 <body>
+
+    <!-- Auth Overlay -->
+    <div id="auth-overlay">
+        <div class="auth-card" id="auth-box">
+            <i class="fas fa-lock" style="font-size: 40px; color: #3b82f6; margin-bottom: 15px;"></i>
+            <h2>Manager Zugang</h2>
+            <input type="password" id="pin-input" class="pin-input" maxlength="4" placeholder="••••" autocomplete="off">
+            <button class="auth-btn" onclick="attemptLogin()">Entsperren</button>
+            <p id="auth-error" style="color: #ef4444; margin-top: 15px; font-size: 14px; display: none;"></p>
+        </div>
+    </div>
 
     <div class="header">
         <div>
@@ -548,7 +645,8 @@
             <div class="modal-header">
                 <h2 style="margin:0">Transaktionsprotokolle</h2>
                 <div style="display: flex; align-items: center; gap: 15px;">
-                    <a href="/api/export-history" target="_blank" style="text-decoration:none;">
+                    <a id="csv-export-link" href="/api/export-history/default" target="_blank"
+                        style="text-decoration:none;">
                         <button class="history-btn" style="background:var(--accent); color:white; border:none;">
                             <i class="fas fa-file-csv"></i> CSV Exportieren
                         </button>
@@ -571,7 +669,36 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
+        // Multi-Tenant: Extract tenant from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const TENANT_ID = urlParams.get('r') || 'default';
+
         const socket = io();
+
+        // Auth + Tenant
+        function attemptLogin() {
+            const pin = document.getElementById('pin-input').value;
+            socket.emit('authenticate', { tenantId: TENANT_ID, pin: pin }, (response) => {
+                if (response.success) {
+                    document.getElementById('auth-overlay').style.opacity = '0';
+                    setTimeout(() => document.getElementById('auth-overlay').style.display = 'none', 500);
+                    // Update CSV export link with tenant
+                    document.getElementById('csv-export-link').href = '/api/export-history/' + TENANT_ID;
+                } else {
+                    const box = document.getElementById('auth-box');
+                    document.getElementById('auth-error').innerText = response.message;
+                    document.getElementById('auth-error').style.display = 'block';
+                    box.classList.add('shake');
+                    setTimeout(() => box.classList.remove('shake'), 400);
+                    document.getElementById('pin-input').value = '';
+                }
+            });
+        }
+
+        // Allow Enter key to submit PIN
+        document.getElementById('pin-input').addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') attemptLogin();
+        });
         const container = document.getElementById('orders-container');
 
         let activeOrdersData = []; // Store active orders to access via ID
@@ -766,13 +893,13 @@
         }
 
         function togglePay(orderId, itemIndex) {
-            socket.emit('mark_item_paid', { orderId, itemIndex });
+            socket.emit('mark_item_paid', { orderId, itemIndex, tenantId: TENANT_ID });
         }
 
         function resolveWaiter(orderId, event) {
             event.stopPropagation(); // specific click on bell
             if (confirm("Serviceanfrage als erledigt markieren?")) {
-                socket.emit('resolve_waiter_call', orderId);
+                socket.emit('resolve_waiter_call', { orderId, tenantId: TENANT_ID });
             }
         }
 
@@ -793,7 +920,7 @@
                     historyLog.unshift(historyEntry);
                 }
 
-                socket.emit('close_table', orderId);
+                socket.emit('close_table', { orderId, tenantId: TENANT_ID });
             }
         }
 

@@ -1101,6 +1101,10 @@
             }
         };
 
+        // Multi-Tenant: Extract tenant from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const TENANT_ID = urlParams.get('r') || 'default';
+
         // Socket connection with reconnection logic
         let socket;
         let reconnectAttempts = 0;
@@ -1120,6 +1124,9 @@
                 socket.on('connect', () => {
                     console.log('✅ Socket connected:', socket.id);
                     reconnectAttempts = 0;
+
+                    // Join tenant room
+                    socket.emit('join_tenant', TENANT_ID);
 
                     // Immediately attempt session restoration
                     const savedOrderId = localStorage.getItem('syncstay_active_order');
@@ -1586,7 +1593,8 @@
                 status: "In Warteschlange",
                 progress: 5,
                 canCancel: true,
-                createdAt: timestamp
+                createdAt: timestamp,
+                tenantId: TENANT_ID
             };
 
             // Save to localStorage IMMEDIATELY for persistence
@@ -1631,7 +1639,8 @@
                     if (socket && socket.connected) {
                         socket.emit("cancel_order", {
                             orderId: id,
-                            shortId: order.shortId
+                            shortId: order.shortId,
+                            tenantId: TENANT_ID
                         });
                         console.log('Order canceled:', id);
                     }
@@ -1659,7 +1668,8 @@
                         orderId: orderId,
                         shortId: order.shortId,
                         itemIndex: itemIndex,
-                        itemName: order.items[itemIndex].name
+                        itemName: order.items[itemIndex].name,
+                        tenantId: TENANT_ID
                     });
                     console.log('Item canceled:', orderId, 'Index:', itemIndex);
                 }
@@ -1863,7 +1873,8 @@
             const payload = {
                 orderId: orderId,
                 tableNumber: tableNum,
-                table: tableNum
+                table: tableNum,
+                tenantId: TENANT_ID
             };
 
             socket.emit('call_waiter', payload);
