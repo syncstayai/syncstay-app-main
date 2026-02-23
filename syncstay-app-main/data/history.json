@@ -1,5 +1,51 @@
 [
   {
+    "orderId": 1771868012074,
+    "shortId": "2074",
+    "table": "1",
+    "tableNumber": "1",
+    "items": [
+      {
+        "name": "Der Klassiker Burger",
+        "price": 20.4,
+        "qty": 1,
+        "mods": [
+          "Mayonnaise",
+          "Remoulade",
+          "Extra Käse",
+          "Doppelt Fleisch",
+          "Ohne Speck"
+        ],
+        "productKey": "burger_klassiker",
+        "isPaid": false,
+        "cancelled": false
+      },
+      {
+        "name": "Wiener Schnitzel",
+        "price": 22.9,
+        "qty": 1,
+        "mods": [
+          "Bratkartoffeln statt Salat",
+          "Ohne Kartoffelsalat",
+          "Rahmsoße"
+        ],
+        "productKey": "classic_schnitzel",
+        "isPaid": false,
+        "cancelled": false
+      }
+    ],
+    "status": "Prêt à être servi",
+    "progress": 100,
+    "canCancel": true,
+    "createdAt": 1771868013140,
+    "tenantId": "gasthof",
+    "lastUpdated": 1771868026292,
+    "needsWaiter": false,
+    "finalStatus": "Abgeschlossen",
+    "finalTime": "5:33:55 PM",
+    "finalTotal": 43.3
+  },
+  {
     "orderId": 1770738895208,
     "shortId": "5208",
     "table": "1",
