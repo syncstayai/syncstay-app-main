@@ -615,7 +615,6 @@
 
 <body>
 
-    <!-- Auth Overlay -->
     <div id="auth-overlay">
         <div class="auth-card" id="auth-box">
             <i class="fas fa-lock" style="font-size: 40px; color: #3b82f6; margin-bottom: 15px;"></i>
@@ -639,7 +638,6 @@
         </div>
     </div>
 
-    <!-- History Modal -->
     <div id="historyModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -669,9 +667,17 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        // Multi-Tenant: Extract tenant from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const TENANT_ID = urlParams.get('r') || 'default';
+        // ==========================================
+        // 🚀 MULTI-TENANT: SMART SUBDOMAIN EXTRACTION
+        // ==========================================
+        let TENANT_ID = window.location.hostname.split('.')[0];
+
+        // Safety fallback for local testing or generic domains
+        if (TENANT_ID === 'localhost' || TENANT_ID === '127' || TENANT_ID === 'app' || TENANT_ID === 'syncstay') {
+            const urlParams = new URLSearchParams(window.location.search);
+            TENANT_ID = urlParams.get('r') || 'default';
+        }
+        // ==========================================
 
         const socket = io();
 

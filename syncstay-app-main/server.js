@@ -68,10 +68,21 @@ loadHistory();
 
 app.use(express.static('public'));
 
-// Routes
+// ==========================================
+// 🚀 THE NEW PROFESSIONAL ROUTES
+// ==========================================
+// Main ordering app
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
+
+// Clean Professional Links
+app.get('/kitchen', (req, res) => res.sendFile(path.join(__dirname, 'public', 'kitchen.html')));
+app.get('/manager', (req, res) => res.sendFile(path.join(__dirname, 'public', 'pos.html')));
+app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'public', 'pos.html')));
+
+// Legacy Fallback Links (Kept safe so old demo links don't break during transition)
 app.get('/kitchen.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'kitchen.html')));
 app.get('/pos', (req, res) => res.sendFile(path.join(__dirname, 'public', 'pos.html')));
+// ==========================================
 
 // Server-side timer management
 const orderTimers = new Map();
