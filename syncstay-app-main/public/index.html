@@ -400,12 +400,6 @@
             font-size: 15px;
         }
 
-        .option-price {
-            color: var(--accent-emerald);
-            font-weight: 700;
-            font-size: 14px;
-        }
-
         .option-checkbox {
             width: 20px;
             height: 20px;
@@ -414,6 +408,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+
+        /* Added for the Radio buttons */
+        .option-checkbox.radio {
+            border-radius: 50%;
         }
 
         .option-checkbox.selected {
@@ -426,6 +425,14 @@
             color: #000;
             font-weight: 900;
             font-size: 12px;
+        }
+
+        .option-checkbox.radio.selected::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #000;
+            border-radius: 50%;
         }
 
         .cart-item {
@@ -668,22 +675,25 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
+        // FULL PRODUCT LIST REINSTATED
         const products = {
-            "s1": { name: "Chawarma Mixte", price: 30.00, cat: "sandwiches", img: "Gemini_Generated_Image_a1ak0sa1ak0sa1ak.png", desc: "شاورما ميكس", options: { extras: [{ name: "Frites", price: 8.00 }] } },
-            "s2": { name: "Chawarma Viande", price: 33.00, cat: "sandwiches", img: "Gemini_Generated_Image_ylcqowylcqowylcq.png", desc: "شاورما لحم", options: { extras: [{ name: "Frites", price: 8.00 }] } },
-            "s3": { name: "Chawarma Poulet", price: 25.00, cat: "sandwiches", img: "Gemini_Generated_Image_of9qc7of9qc7of9q.png", desc: "شاورما دجاج" },
-            "s4": { name: "Chawarma Arabie Poulet", price: 45.00, cat: "sandwiches", img: "Gemini_Generated_Image_y9t3i2y9t3i2y9t3.png", desc: "شاورما عربي دجاج" },
-            "s5": { name: "Chawarma Arabie Viande", price: 55.00, cat: "sandwiches", img: "Gemini_Generated_Image_qt10o8qt10o8qt10.png", desc: "شاورما عربي لحم" },
-            "s6": { name: "Chawarma Arabie Mixte", price: 50.00, cat: "sandwiches", img: "Gemini_Generated_Image_o7568fo7568fo756.png", desc: "شاورما عربي ميكس" },
-            "s7": { name: "Falafel", price: 20.00, cat: "sandwiches", img: "Gemini_Generated_Image_sn5trtsn5trtsn5t.png", desc: "فلافل" },
-            "s8": { name: "Chich Taouque", price: 35.00, cat: "sandwiches", img: "Gemini_Generated_Image_3tr95g3tr95g3tr9.png", desc: "شيش طاووق" },
-            "s9": { name: "Crispy Poitrine De Poulet (4 Morceaux)", price: 35.00, cat: "sandwiches", img: "Gemini_Generated_Image_8vvbyq8vvbyq8vvb.png", desc: "كريسبي دجاج 4 قطع" },
-            "s10": { name: "Frite", price: 8.00, cat: "sandwiches", img: "Gemini_Generated_Image_ltu5zmltu5zmltu5.png", desc: "فريت" },
-            "s11": { name: "Sandwich Viande Hachée Normale", price: 30.00, cat: "sandwiches", img: "Gemini_Generated_Image_pbuzutpbuzutpbuz.png", desc: "سندويش كفتة لحم عادي" },
-            "s12": { name: "Sandwich Viande Hachée Supême", price: 40.00, cat: "sandwiches", img: "Gemini_Generated_Image_rdjuaprdjuaprdju.png", desc: "سندويش كفتة لحم سوبريم" },
-            "s13": { name: "Sandwich Poulet Hachée Normale", price: 25.00, cat: "sandwiches", img: "Gemini_Generated_Image_jwojbgjwojbgjwoj.png", desc: "سندويش كفتة دجاج عادي" },
-            "s14": { name: "Sandwich Poulet Hachée Supême", price: 35.00, cat: "sandwiches", img: "Gemini_Generated_Image_eeilcyeeilcyeeil.png", desc: "سندويش كفتة دجاج سوبريم" },
+            // SANDWICHES
+            "s1": { name: "Chawarma Mixte", price: 30.00, cat: "sandwiches", img: "Gemini_Generated_Image_a1ak0sa1ak0sa1ak.png", desc: "شاورما ميكس", options: { requiredChoices: [{ title: "Options", selections: [{ name: "Sans frites", price: 0 }, { name: "Frites", price: 8.00 }] }] } },
+            "s2": { name: "Chawarma Viande", price: 33.00, cat: "sandwiches", img: "Gemini_Generated_Image_ylcqowylcqowylcq.png", desc: "شاورما لحم", options: { requiredChoices: [{ title: "Options", selections: [{ name: "Sans frites", price: 0 }, { name: "Frites", price: 8.00 }] }] } },
+            "s3": { name: "Chawarma Poulet", price: 25.00, cat: "sandwiches", img: "Gemini_Generated_Image_of9qc7of9qc7of9q.png", desc: "شاورما دجاج", options: { requiredChoices: [{ title: "Options", selections: [{ name: "Sans frites", price: 0 }, { name: "Frites", price: 8.00 }] }] } },
+            "s7": { name: "Falafel", price: 20.00, cat: "sandwiches", img: "Gemini_Generated_Image_sn5trtsn5trtsn5t.png", desc: "فلافل", options: { requiredChoices: [{ title: "Options", selections: [{ name: "Sans frites", price: 0 }, { name: "Frites", price: 8.00 }] }] } },
+            "s8": { name: "Chich Taouque", price: 35.00, cat: "sandwiches", img: "Gemini_Generated_Image_3tr95g3tr95g3tr9.png", desc: "شيش طاووق", options: { requiredChoices: [{ title: "Options", selections: [{ name: "Sans frites", price: 0 }, { name: "Frites", price: 8.00 }] }] } },
+            "s9": { name: "Crispy Poitrine De Poulet (4 Morceaux)", price: 35.00, cat: "sandwiches", img: "Gemini_Generated_Image_8vvbyq8vvbyq8vvb.png", desc: "كريسبي دجاج 4 قطع", options: { requiredChoices: [{ title: "Options", selections: [{ name: "Sans frites", price: 0 }, { name: "Frites", price: 8.00 }] }] } },
+            "s10": { name: "Frite", price: 8.00, cat: "sandwiches", img: "Gemini_Generated_Image_ltu5zmltu5zmltu5.png", desc: "فريت" }, // No fries option needed for fries
+            "s11": { name: "Sandwich Viande Hachée Normale", price: 30.00, cat: "sandwiches", img: "Gemini_Generated_Image_pbuzutpbuzutpbuz.png", desc: "سندويش كفتة لحم عادي", options: { requiredChoices: [{ title: "Options", selections: [{ name: "Sans frites", price: 0 }, { name: "Frites", price: 8.00 }] }] } },
+            "s12": { name: "Sandwich Viande Hachée Supême", price: 40.00, cat: "sandwiches", img: "Gemini_Generated_Image_rdjuaprdjuaprdju.png", desc: "سندويش كفتة لحم سوبريم", options: { requiredChoices: [{ title: "Options", selections: [{ name: "Sans frites", price: 0 }, { name: "Frites", price: 8.00 }] }] } },
+            "s13": { name: "Sandwich Poulet Hachée Normale", price: 25.00, cat: "sandwiches", img: "Gemini_Generated_Image_jwojbgjwojbgjwoj.png", desc: "سندويش كفتة دجاج عادي", options: { requiredChoices: [{ title: "Options", selections: [{ name: "Sans frites", price: 0 }, { name: "Frites", price: 8.00 }] }] } },
+            "s14": { name: "Sandwich Poulet Hachée Supême", price: 35.00, cat: "sandwiches", img: "Gemini_Generated_Image_eeilcyeeilcyeeil.png", desc: "سندويش كفتة دجاج سوبريم", options: { requiredChoices: [{ title: "Options", selections: [{ name: "Sans frites", price: 0 }, { name: "Frites", price: 8.00 }] }] } },
 
+            // PLATS (Arabies have been moved here as requested)
+            "s4": { name: "Chawarma Arabie Poulet", price: 45.00, cat: "plats", img: "Gemini_Generated_Image_y9t3i2y9t3i2y9t3.png", desc: "شاورما عربي دجاج" },
+            "s5": { name: "Chawarma Arabie Viande", price: 55.00, cat: "plats", img: "Gemini_Generated_Image_qt10o8qt10o8qt10.png", desc: "شاورما عربي لحم" },
+            "s6": { name: "Chawarma Arabie Mixte", price: 50.00, cat: "plats", img: "Gemini_Generated_Image_o7568fo7568fo756.png", desc: "شاورما عربي ميكس" },
             "p1": { name: "Plat Chawarma Mixte", price: 60.00, cat: "plats", img: "Gemini_Generated_Image_wyca3wyca3wyca3w.png", desc: "طبق شاورما ميكس" },
             "p2": { name: "Plat Chawarma Viande", price: 65.00, cat: "plats", img: "Gemini_Generated_Image_vrieb6vrieb6vrie.png", desc: "طبق شاورما لحم" },
             "p3": { name: "Plat Chawarma Poulet", price: 55.00, cat: "plats", img: "Gemini_Generated_Image_sdan0gsdan0gsdan.png", desc: "طبق شاورما دجاج" },
@@ -701,6 +711,7 @@
             "p15": { name: "Fatteh Chawarma Viande", price: 75.00, cat: "plats", img: "Gemini_Generated_Image_vem49fvem49fvem4.png", desc: "فتة شاورما لحم" },
             "p16": { name: "Fatteh Chawarma Poulet", price: 65.00, cat: "plats", img: "Gemini_Generated_Image_42j9vz42j9vz42j9.png", desc: "فتة شاورما دجاج" },
 
+            // DESSERTS (Baglawa uses .png as requested)
             "d1": { name: "Ouch Boulboul", price: 10.00, cat: "desserts", img: "Gemini_Generated_Image_jkbnhrjkbnhrjkbn.png", desc: "2 عش بلبل" },
             "d2": { name: "Bas Ousafi", price: 10.00, cat: "desserts", img: "Gemini_Generated_Image_vee0gxvee0gxvee0.png", desc: "بسبوسة بالقشطة" },
             "d3": { name: "Baglawa", price: 10.00, cat: "desserts", img: "Gemini_Generated_Image_12n41g12n41g12n4.png", desc: "بقلاوة" },
@@ -710,19 +721,20 @@
             "d7": { name: "Kunafa Au Fromage (2 Personnes)", price: 55.00, cat: "desserts", img: "Gemini_Generated_Image_i7ajo1i7ajo1i7aj.png", desc: "كنافة بالجبنة شخصين" },
             "d8": { name: "Kunafa A La Creme", price: 12.00, cat: "desserts", img: "Gemini_Generated_Image_u37pe3u37pe3u37p.png", desc: "كنافة بالقشطة" },
 
-            "j1": { name: "Jus Carotte", price: 18.00, cat: "jus", img: "Gemini_Generated_Image_sfd66qsfd66qsfd6.png", desc: "جزر" },
-            "j2": { name: "Jus Pomme", price: 22.00, cat: "jus", img: "Gemini_Generated_Image_pc2o9npc2o9npc2o.png", desc: "تفاح" },
-            "j3": { name: "Jus Orange", price: 17.00, cat: "jus", img: "Gemini_Generated_Image_44yns644yns644yn.png", desc: "برتقال" },
-            "j4": { name: "Jus Citron A La Menthe", price: 22.00, cat: "jus", img: "Gemini_Generated_Image_7zjl2o7zjl2o7zjl.png", desc: "حامض بالنعناع" },
-            "j5": { name: "Jus Banane Au Lait", price: 19.00, cat: "jus", img: "Gemini_Generated_Image_mv1r0rmv1r0rmv1r.png", desc: "موز حليب" },
-            "j6": { name: "Jus Fraise", price: 23.00, cat: "jus", img: "Gemini_Generated_Image_ey0ix5ey0ix5ey0i.png", desc: "فريز" },
-            "j7": { name: "Jus Kiwi", price: 22.00, cat: "jus", img: "Gemini_Generated_Image_910re4910re4910r.png", desc: "كيوي" },
-            "j8": { name: "Jus Mangue", price: 23.00, cat: "jus", img: "Gemini_Generated_Image_ghreb8ghreb8ghre.png", desc: "مانجو" },
-            "j9": { name: "Jus Papaye", price: 22.00, cat: "jus", img: "Gemini_Generated_Image_7dr7sj7dr7sj7dr7.png", desc: "باباي" },
-            "j10": { name: "Jus Ananas", price: 22.00, cat: "jus", img: "Gemini_Generated_Image_a89uq1a89uq1a89u.png", desc: "أناناس" },
-            "j11": { name: "Jus Concombre", price: 15.00, cat: "jus", img: "Gemini_Generated_Image_guur61guur61guur.png", desc: "خيار" },
-            "j12": { name: "Jus Pêche", price: 23.00, cat: "jus", img: "Gemini_Generated_Image_pc2o9npc2o9npc2o.png", desc: "خوخ" },
-            "j13": { name: "Jus Betterave", price: 18.00, cat: "jus", img: "Gemini_Generated_Image_hzwe2rhzwe2rhzwe.png", desc: "بنجر باربا" }
+            // JUS (All with Ice Options)
+            "j1": { name: "Jus Carotte", price: 18.00, cat: "jus", img: "Gemini_Generated_Image_sfd66qsfd66qsfd6.png", desc: "جزر", options: { requiredChoices: [{ title: "Préférence", selections: [{ name: "Sans glace", price: 0 }, { name: "Avec glace", price: 0 }] }] } },
+            "j2": { name: "Jus Pomme", price: 22.00, cat: "jus", img: "Gemini_Generated_Image_pc2o9npc2o9npc2o.png", desc: "تفاح", options: { requiredChoices: [{ title: "Préférence", selections: [{ name: "Sans glace", price: 0 }, { name: "Avec glace", price: 0 }] }] } },
+            "j3": { name: "Jus Orange", price: 17.00, cat: "jus", img: "Gemini_Generated_Image_44yns644yns644yn.png", desc: "برتقال", options: { requiredChoices: [{ title: "Préférence", selections: [{ name: "Sans glace", price: 0 }, { name: "Avec glace", price: 0 }] }] } },
+            "j4": { name: "Jus Citron A La Menthe", price: 22.00, cat: "jus", img: "Gemini_Generated_Image_7zjl2o7zjl2o7zjl.png", desc: "حامض بالنعناع", options: { requiredChoices: [{ title: "Préférence", selections: [{ name: "Sans glace", price: 0 }, { name: "Avec glace", price: 0 }] }] } },
+            "j5": { name: "Jus Banane Au Lait", price: 19.00, cat: "jus", img: "Gemini_Generated_Image_mv1r0rmv1r0rmv1r.png", desc: "موز حليب", options: { requiredChoices: [{ title: "Préférence", selections: [{ name: "Sans glace", price: 0 }, { name: "Avec glace", price: 0 }] }] } },
+            "j6": { name: "Jus Fraise", price: 23.00, cat: "jus", img: "Gemini_Generated_Image_ey0ix5ey0ix5ey0i.png", desc: "فريز", options: { requiredChoices: [{ title: "Préférence", selections: [{ name: "Sans glace", price: 0 }, { name: "Avec glace", price: 0 }] }] } },
+            "j7": { name: "Jus Kiwi", price: 22.00, cat: "jus", img: "Gemini_Generated_Image_910re4910re4910r.png", desc: "كيوي", options: { requiredChoices: [{ title: "Préférence", selections: [{ name: "Sans glace", price: 0 }, { name: "Avec glace", price: 0 }] }] } },
+            "j8": { name: "Jus Mangue", price: 23.00, cat: "jus", img: "Gemini_Generated_Image_ghreb8ghreb8ghre.png", desc: "مانجو", options: { requiredChoices: [{ title: "Préférence", selections: [{ name: "Sans glace", price: 0 }, { name: "Avec glace", price: 0 }] }] } },
+            "j9": { name: "Jus Papaye", price: 22.00, cat: "jus", img: "Gemini_Generated_Image_7dr7sj7dr7sj7dr7.png", desc: "باباي", options: { requiredChoices: [{ title: "Préférence", selections: [{ name: "Sans glace", price: 0 }, { name: "Avec glace", price: 0 }] }] } },
+            "j10": { name: "Jus Ananas", price: 22.00, cat: "jus", img: "Gemini_Generated_Image_a89uq1a89uq1a89u.png", desc: "أناناس", options: { requiredChoices: [{ title: "Préférence", selections: [{ name: "Sans glace", price: 0 }, { name: "Avec glace", price: 0 }] }] } },
+            "j11": { name: "Jus Concombre", price: 15.00, cat: "jus", img: "Gemini_Generated_Image_guur61guur61guur.png", desc: "خيار", options: { requiredChoices: [{ title: "Préférence", selections: [{ name: "Sans glace", price: 0 }, { name: "Avec glace", price: 0 }] }] } },
+            "j12": { name: "Jus Pêche", price: 23.00, cat: "jus", img: "Gemini_Generated_Image_pc2o9npc2o9npc2o.png", desc: "خوخ", options: { requiredChoices: [{ title: "Préférence", selections: [{ name: "Sans glace", price: 0 }, { name: "Avec glace", price: 0 }] }] } },
+            "j13": { name: "Jus Betterave", price: 18.00, cat: "jus", img: "Gemini_Generated_Image_hzwe2rhzwe2rhzwe.png", desc: "بنجر باربا", options: { requiredChoices: [{ title: "Préférence", selections: [{ name: "Sans glace", price: 0 }, { name: "Avec glace", price: 0 }] }] } }
         };
 
         let socket;
@@ -735,7 +747,8 @@
         }
         connectSocket();
 
-        let cart = [], activeOrders = [], currentKey = "", basePrice = 0;
+        let cart = [], activeOrders = [], currentKey = "", basePrice = 0, extraPrices = 0;
+        let selectedMods = {}; // Store the user's choices
         let tableNum = localStorage.getItem('staySync_table') || "1";
 
         window.onload = function () {
@@ -754,6 +767,12 @@
             showToast(`Table ${n} sélectionnée`);
         }
 
+        function filterMenu(cat, btn) {
+            document.querySelectorAll('.category-pill').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderMenu(cat);
+        }
+
         function renderMenu(cat) {
             const grid = document.getElementById("productGrid");
             if (!grid) return;
@@ -765,7 +784,6 @@
                     <div class="product-card" onclick="openProduct('${key}')">
                         <img src="${p.img}" alt="${p.name}" class="product-image">
                         <div class="image-overlay"></div>
-               
                         <div class="product-info">
                             <h3 class="product-title">${p.name}</h3>
                             <p class="product-desc">${p.desc}</p>
@@ -778,68 +796,94 @@
             }
         }
 
-        function filterMenu(cat, btn) {
-            document.querySelectorAll('.category-pill').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            renderMenu(cat);
-        }
-
         function openProduct(key) {
-            selectedOptions = []; extraPrices = 0; currentKey = key;
+            currentKey = key; extraPrices = 0; selectedMods = {};
             const p = products[key]; basePrice = p.price;
             document.getElementById("optionsTitle").innerText = p.name;
 
             let html = "";
-            if (p.options && p.options.extras) {
-                html += `<div class="option-section"><div class="section-title">Extras</div>`;
-                p.options.extras.forEach(ex => {
-                    html += `<div class="option-item" onclick="toggleOption(this, '${ex.name}', ${ex.price})">
-                        <div class="option-name">${ex.name}</div>
-                        <div style="display:flex; align-items:center; gap:12px;">
-                            <div class="option-price">+${ex.price.toFixed(2)} MAD</div>
-                            <div class="option-checkbox"></div>
-                        </div>
-                    </div>`;
+            if (p.options && p.options.requiredChoices) {
+                p.options.requiredChoices.forEach(choice => {
+                    html += `<div class="option-section"><div class="section-title">${choice.title}</div>`;
+                    choice.selections.forEach((sel, index) => {
+                        const isSelected = (index === 0);
+                        if (isSelected) selectedMods[choice.title] = sel;
+
+                        // PREMIUM GREEN COLOR FOR PRICES
+                        let priceTag = sel.price > 0 ? `<div class="option-price" style="color: var(--accent-emerald); font-weight: 700;">+${sel.price.toFixed(2)} MAD</div>` : "";
+
+                        html += `<div class="option-item ${isSelected ? 'selected' : ''}" onclick="selectRequiredOption(this, '${choice.title}', '${sel.name}', ${sel.price})">
+                            <div class="option-name">${sel.name}</div>
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                ${priceTag}
+                                <div class="option-checkbox radio ${isSelected ? 'selected' : ''}"></div>
+                            </div>
+                        </div>`;
+                    });
+                    html += `</div>`;
                 });
-                html += `</div>`;
             }
 
             document.getElementById("optionsList").innerHTML = html || "<p style='text-align:center;color:var(--text-tertiary);margin-top:20px'>Aucune option disponible</p>";
             updatePrice(); openSheet("optionsSheet");
         }
 
-        let selectedOptions = []; let extraPrices = 0;
+        function selectRequiredOption(element, choiceTitle, selName, selPrice) {
+            const container = element.parentElement;
+            container.querySelectorAll('.option-item').forEach(i => i.classList.remove('selected'));
+            container.querySelectorAll('.option-checkbox').forEach(i => i.classList.remove('selected'));
 
-        function toggleOption(element, name, price = 0) {
-            const checkbox = element.querySelector('.option-checkbox');
-            if (checkbox.classList.contains('selected')) {
-                checkbox.classList.remove('selected');
-                selectedOptions = selectedOptions.filter(opt => opt !== name);
-                extraPrices -= price;
-            } else {
-                checkbox.classList.add('selected');
-                selectedOptions.push(name);
-                extraPrices += price;
-            }
+            element.classList.add('selected');
+            element.querySelector('.option-checkbox').classList.add('selected');
+
+            selectedMods[choiceTitle] = { name: selName, price: selPrice };
             updatePrice();
         }
 
-        function updatePrice() { document.getElementById("livePrice").innerText = (basePrice + extraPrices).toFixed(2) + " MAD"; }
+        function updatePrice() {
+            let extra = 0;
+            for (let title in selectedMods) { extra += selectedMods[title].price; }
+            extraPrices = extra;
+            document.getElementById("livePrice").innerText = (basePrice + extraPrices).toFixed(2) + " MAD";
+        }
 
         function addToCart(instant = false) {
             const p = products[currentKey];
-            cart.push({ name: p.name, price: basePrice + extraPrices, qty: 1, mods: [...selectedOptions] });
-            updateCartUI(); showToast("Ajouté au panier !"); closeSheet("optionsSheet");
+            let modsList = [];
+            let mainPrice = basePrice;
+            let addFritesAsSeparateItem = false;
+
+            for (let title in selectedMods) {
+                const mod = selectedMods[title];
+
+                // Separate Frites into an independent item
+                if (mod.name.includes("Frites") && mod.price > 0) {
+                    addFritesAsSeparateItem = true;
+                }
+                // Keep other selections (like Ice) attached to the main item
+                else if (mod.name !== "Sans frites") {
+                    modsList.push(mod.name);
+                    mainPrice += mod.price;
+                }
+            }
+
+            // 1. Add the main item to the cart (without the price of fries)
+            cart.push({ name: p.name, price: mainPrice, qty: 1, mods: modsList });
+
+            // 2. Add "Frite" as a completely separate cart item if selected
+            if (addFritesAsSeparateItem) {
+                cart.push({ name: "Frite", price: 8.00, qty: 1, mods: [] });
+            }
+
+            updateCartUI();
+            showToast("Ajouté au panier !");
+            closeSheet("optionsSheet");
         }
 
         function updateCartUI() {
             const total = cart.reduce((sum, item) => sum + item.price, 0);
-
-            // This is the important line that was crashing before!
             document.getElementById("cartCount").innerText = cart.length;
-
             document.getElementById("cartTotal").innerText = total.toFixed(2) + " MAD";
-
             const badge = document.getElementById("cartBadge");
             badge.innerText = cart.length;
             cart.length > 0 ? badge.classList.add("show") : badge.classList.remove("show");
@@ -864,17 +908,14 @@
 
         function openNotesSheet() {
             if (cart.length === 0) { showToast("Le panier est vide !"); return; }
-            closeSheet('cartSheet');
-            openSheet('notesSheet');
+            closeSheet('cartSheet'); openSheet('notesSheet');
         }
 
         const restaurantPhone = "212605080812";
-
         function sendBatchOrder() {
             if (cart.length === 0) { showToast("Le panier est vide !"); return; }
 
             const notesInput = document.getElementById('orderNotes').value.trim();
-
             const orderObj = { orderId: Date.now(), table: tableNum, items: JSON.parse(JSON.stringify(cart)), notes: notesInput };
             if (socket && socket.connected) { socket.emit('new_order', orderObj); }
 
@@ -892,9 +933,8 @@
             }
 
             message += `%0A_Merci de confirmer la préparation._`;
-
             cart = [];
-            document.getElementById('orderNotes').value = ""; // clear notes after sending
+            document.getElementById('orderNotes').value = "";
             updateCartUI();
             closeSheet("notesSheet");
 
@@ -906,6 +946,7 @@
         }
 
         function callWaiter() { showToast("🔔 Serveur appelé - Table " + tableNum); }
+
         function openSheet(id) {
             document.querySelectorAll('.bottom-sheet').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add("active");
