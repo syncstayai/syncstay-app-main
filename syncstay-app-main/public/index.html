@@ -155,6 +155,9 @@
             overflow-x: auto;
             white-space: nowrap;
             border-bottom: 1px solid var(--glass-border);
+            /* Fixes the Android click bug by enabling smooth momentum scrolling */
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
         }
 
         .category-bar::-webkit-scrollbar {
@@ -410,7 +413,6 @@
             justify-content: center;
         }
 
-        /* Added for the Radio buttons */
         .option-checkbox.radio {
             border-radius: 50%;
         }
@@ -675,7 +677,7 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        // FULL PRODUCT LIST REINSTATED
+        // FULL PRODUCT LIST
         const products = {
             // SANDWICHES
             "s1": { name: "Chawarma Mixte", price: 30.00, cat: "sandwiches", img: "Gemini_Generated_Image_a1ak0sa1ak0sa1ak.png", desc: "شاورما ميكس", options: { requiredChoices: [{ title: "Options", selections: [{ name: "Sans frites", price: 0 }, { name: "Frites", price: 8.00 }] }] } },
@@ -684,13 +686,13 @@
             "s7": { name: "Falafel", price: 20.00, cat: "sandwiches", img: "Gemini_Generated_Image_sn5trtsn5trtsn5t.png", desc: "فلافل", options: { requiredChoices: [{ title: "Options", selections: [{ name: "Sans frites", price: 0 }, { name: "Frites", price: 8.00 }] }] } },
             "s8": { name: "Chich Taouque", price: 35.00, cat: "sandwiches", img: "Gemini_Generated_Image_3tr95g3tr95g3tr9.png", desc: "شيش طاووق", options: { requiredChoices: [{ title: "Options", selections: [{ name: "Sans frites", price: 0 }, { name: "Frites", price: 8.00 }] }] } },
             "s9": { name: "Crispy Poitrine De Poulet (4 Morceaux)", price: 35.00, cat: "sandwiches", img: "Gemini_Generated_Image_8vvbyq8vvbyq8vvb.png", desc: "كريسبي دجاج 4 قطع", options: { requiredChoices: [{ title: "Options", selections: [{ name: "Sans frites", price: 0 }, { name: "Frites", price: 8.00 }] }] } },
-            "s10": { name: "Frite", price: 8.00, cat: "sandwiches", img: "Gemini_Generated_Image_ltu5zmltu5zmltu5.png", desc: "فريت" }, // No fries option needed for fries
+            "s10": { name: "Frite", price: 8.00, cat: "sandwiches", img: "Gemini_Generated_Image_ltu5zmltu5zmltu5.png", desc: "فريت" },
             "s11": { name: "Sandwich Viande Hachée Normale", price: 30.00, cat: "sandwiches", img: "Gemini_Generated_Image_pbuzutpbuzutpbuz.png", desc: "سندويش كفتة لحم عادي", options: { requiredChoices: [{ title: "Options", selections: [{ name: "Sans frites", price: 0 }, { name: "Frites", price: 8.00 }] }] } },
             "s12": { name: "Sandwich Viande Hachée Supême", price: 40.00, cat: "sandwiches", img: "Gemini_Generated_Image_rdjuaprdjuaprdju.png", desc: "سندويش كفتة لحم سوبريم", options: { requiredChoices: [{ title: "Options", selections: [{ name: "Sans frites", price: 0 }, { name: "Frites", price: 8.00 }] }] } },
             "s13": { name: "Sandwich Poulet Hachée Normale", price: 25.00, cat: "sandwiches", img: "Gemini_Generated_Image_jwojbgjwojbgjwoj.png", desc: "سندويش كفتة دجاج عادي", options: { requiredChoices: [{ title: "Options", selections: [{ name: "Sans frites", price: 0 }, { name: "Frites", price: 8.00 }] }] } },
             "s14": { name: "Sandwich Poulet Hachée Supême", price: 35.00, cat: "sandwiches", img: "Gemini_Generated_Image_eeilcyeeilcyeeil.png", desc: "سندويش كفتة دجاج سوبريم", options: { requiredChoices: [{ title: "Options", selections: [{ name: "Sans frites", price: 0 }, { name: "Frites", price: 8.00 }] }] } },
 
-            // PLATS (Arabies have been moved here as requested)
+            // PLATS
             "s4": { name: "Chawarma Arabie Poulet", price: 45.00, cat: "plats", img: "Gemini_Generated_Image_y9t3i2y9t3i2y9t3.png", desc: "شاورما عربي دجاج" },
             "s5": { name: "Chawarma Arabie Viande", price: 55.00, cat: "plats", img: "Gemini_Generated_Image_qt10o8qt10o8qt10.png", desc: "شاورما عربي لحم" },
             "s6": { name: "Chawarma Arabie Mixte", price: 50.00, cat: "plats", img: "Gemini_Generated_Image_o7568fo7568fo756.png", desc: "شاورما عربي ميكس" },
@@ -711,7 +713,7 @@
             "p15": { name: "Fatteh Chawarma Viande", price: 75.00, cat: "plats", img: "Gemini_Generated_Image_vem49fvem49fvem4.png", desc: "فتة شاورما لحم" },
             "p16": { name: "Fatteh Chawarma Poulet", price: 65.00, cat: "plats", img: "Gemini_Generated_Image_42j9vz42j9vz42j9.png", desc: "فتة شاورما دجاج" },
 
-            // DESSERTS (Baglawa uses .png as requested)
+            // DESSERTS
             "d1": { name: "Ouch Boulboul", price: 10.00, cat: "desserts", img: "Gemini_Generated_Image_jkbnhrjkbnhrjkbn.png", desc: "2 عش بلبل" },
             "d2": { name: "Bas Ousafi", price: 10.00, cat: "desserts", img: "Gemini_Generated_Image_vee0gxvee0gxvee0.png", desc: "بسبوسة بالقشطة" },
             "d3": { name: "Baglawa", price: 10.00, cat: "desserts", img: "Gemini_Generated_Image_12n41g12n41g12n4.png", desc: "بقلاوة" },
@@ -721,7 +723,7 @@
             "d7": { name: "Kunafa Au Fromage (2 Personnes)", price: 55.00, cat: "desserts", img: "Gemini_Generated_Image_i7ajo1i7ajo1i7aj.png", desc: "كنافة بالجبنة شخصين" },
             "d8": { name: "Kunafa A La Creme", price: 12.00, cat: "desserts", img: "Gemini_Generated_Image_u37pe3u37pe3u37p.png", desc: "كنافة بالقشطة" },
 
-            // JUS (All with Ice Options)
+            // JUS 
             "j1": { name: "Jus Carotte", price: 18.00, cat: "jus", img: "Gemini_Generated_Image_sfd66qsfd66qsfd6.png", desc: "جزر", options: { requiredChoices: [{ title: "Préférence", selections: [{ name: "Sans glace", price: 0 }, { name: "Avec glace", price: 0 }] }] } },
             "j2": { name: "Jus Pomme", price: 22.00, cat: "jus", img: "Gemini_Generated_Image_pc2o9npc2o9npc2o.png", desc: "تفاح", options: { requiredChoices: [{ title: "Préférence", selections: [{ name: "Sans glace", price: 0 }, { name: "Avec glace", price: 0 }] }] } },
             "j3": { name: "Jus Orange", price: 17.00, cat: "jus", img: "Gemini_Generated_Image_44yns644yns644yn.png", desc: "برتقال", options: { requiredChoices: [{ title: "Préférence", selections: [{ name: "Sans glace", price: 0 }, { name: "Avec glace", price: 0 }] }] } },
@@ -770,7 +772,12 @@
         function filterMenu(cat, btn) {
             document.querySelectorAll('.category-pill').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
+
+            // Fixes Android tap issues by safely scrolling the button into view
+            btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+
             renderMenu(cat);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function renderMenu(cat) {
@@ -809,7 +816,6 @@
                         const isSelected = (index === 0);
                         if (isSelected) selectedMods[choice.title] = sel;
 
-                        // PREMIUM GREEN COLOR FOR PRICES
                         let priceTag = sel.price > 0 ? `<div class="option-price" style="color: var(--accent-emerald); font-weight: 700;">+${sel.price.toFixed(2)} MAD</div>` : "";
 
                         html += `<div class="option-item ${isSelected ? 'selected' : ''}" onclick="selectRequiredOption(this, '${choice.title}', '${sel.name}', ${sel.price})">
@@ -856,21 +862,17 @@
             for (let title in selectedMods) {
                 const mod = selectedMods[title];
 
-                // Separate Frites into an independent item
                 if (mod.name.includes("Frites") && mod.price > 0) {
                     addFritesAsSeparateItem = true;
                 }
-                // Keep other selections (like Ice) attached to the main item
                 else if (mod.name !== "Sans frites") {
                     modsList.push(mod.name);
                     mainPrice += mod.price;
                 }
             }
 
-            // 1. Add the main item to the cart (without the price of fries)
             cart.push({ name: p.name, price: mainPrice, qty: 1, mods: modsList });
 
-            // 2. Add "Frite" as a completely separate cart item if selected
             if (addFritesAsSeparateItem) {
                 cart.push({ name: "Frite", price: 8.00, qty: 1, mods: [] });
             }
@@ -919,20 +921,22 @@
             const orderObj = { orderId: Date.now(), table: tableNum, items: JSON.parse(JSON.stringify(cart)), notes: notesInput };
             if (socket && socket.connected) { socket.emit('new_order', orderObj); }
 
-            let message = `*Nouvelle Commande - Table #${tableNum}* 🍽️%0A------------------------%0A`;
+            // Using \n for newlines so we can safely encode the entire string at the end
+            let message = `*Nouvelle Commande - Table ${tableNum}* 🍽️\n------------------------\n`;
             let total = 0;
             cart.forEach(item => {
-                message += `▪ ${item.qty}x ${item.name} (${item.price} MAD)%0A`;
-                if (item.mods && item.mods.length > 0) message += `   _Note: ${item.mods.join(", ")}_%0A`;
+                message += `▪ 1x ${item.name} (${item.price} MAD)\n`;
+                if (item.mods && item.mods.length > 0) message += `   _Note: ${item.mods.join(", ")}_\n`;
                 total += item.price;
             });
-            message += `------------------------%0A*Total: ${total} MAD*%0A`;
+            message += `------------------------\n*Total: ${total} MAD*\n`;
 
             if (notesInput) {
-                message += `%0A*Notes / Allergies:*%0A_${encodeURIComponent(notesInput)}_%0A`;
+                message += `\n*Notes / Allergies:*\n_${notesInput}_\n`;
             }
 
-            message += `%0A_Merci de confirmer la préparation._`;
+            message += `\n_Merci de confirmer la préparation._`;
+
             cart = [];
             document.getElementById('orderNotes').value = "";
             updateCartUI();
@@ -942,7 +946,8 @@
             island.classList.add("active");
             setTimeout(() => island.classList.remove("active"), 5000);
 
-            window.open(`https://wa.me/${restaurantPhone}?text=${message}`, '_blank');
+            // MAGIC FIX: encodeURIComponent makes the whole string safe for all Androids and iPhones
+            window.open(`https://wa.me/${restaurantPhone}?text=${encodeURIComponent(message)}`, '_blank');
         }
 
         function callWaiter() { showToast("🔔 Serveur appelé - Table " + tableNum); }
