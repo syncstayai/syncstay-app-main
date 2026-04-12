@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="fr">
 
 <head>
-    <title>Der Gasthof • Speisekarte</title>
+    <title>Rimass Alcham • Menu Premium</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet">
@@ -44,7 +44,6 @@
             padding-bottom: 100px;
         }
 
-        /* Top Glass Bar */
         .top-bar {
             position: fixed;
             top: 0;
@@ -64,9 +63,9 @@
 
         .logo {
             font-weight: 900;
-            font-size: 24px;
+            font-size: 20px;
             letter-spacing: -0.5px;
-            background: linear-gradient(135deg, var(--accent-gold), #FFA500);
+            background: linear-gradient(135deg, #e31837, var(--accent-gold));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -143,7 +142,6 @@
             display: flex;
         }
 
-        /* Category Pills */
         .category-bar {
             position: fixed;
             top: 60px;
@@ -187,7 +185,6 @@
             font-weight: 700;
         }
 
-        /* Product Grid */
         .product-grid {
             padding: 140px 20px 100px;
             display: grid;
@@ -276,7 +273,6 @@
             transform: scale(0.9);
         }
 
-        /* Backdrop Overlay */
         .sheet-backdrop {
             position: fixed;
             top: 0;
@@ -295,7 +291,6 @@
             visibility: visible;
         }
 
-        /* Bottom Sheets */
         .bottom-sheet {
             position: fixed;
             bottom: -100%;
@@ -309,14 +304,12 @@
             box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.5);
             max-height: 90vh;
             overflow-y: auto;
-            touch-action: pan-y;
         }
 
         .bottom-sheet.active {
             bottom: 0;
         }
 
-        /* Sheet Header (Scrollable with content) */
         .sheet-header {
             position: relative;
             padding-bottom: 12px;
@@ -337,19 +330,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.2s;
             z-index: 20;
-        }
-
-        .sheet-close-btn:hover {
-            background: var(--surface-light);
-            border-color: var(--text-tertiary);
-            color: var(--text-primary);
-            transform: scale(1.05);
-        }
-
-        .sheet-close-btn:active {
-            transform: scale(0.95);
         }
 
         .sheet-title {
@@ -359,7 +340,6 @@
             color: var(--text-primary);
         }
 
-        /* Dynamic Island Tracker */
         .dynamic-island {
             position: fixed;
             bottom: 24px;
@@ -367,7 +347,6 @@
             transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.9);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 215, 0, 0.3);
             border-radius: 50px;
             padding: 12px 24px;
@@ -378,7 +357,6 @@
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
             min-width: 200px;
             justify-content: center;
-            transition: all 0.3s;
             cursor: pointer;
         }
 
@@ -387,44 +365,6 @@
             animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), glow-pulse 2s infinite;
         }
 
-        .dynamic-island.ready {
-            background: rgba(16, 185, 129, 0.2);
-            border-color: var(--accent-emerald);
-            animation: pulse-ready 2s infinite;
-        }
-
-        .dynamic-island.critical {
-            background: rgba(239, 68, 68, 0.25);
-            border-color: #ef4444;
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
-            animation: pulse-red 2s infinite;
-            cursor: pointer;
-        }
-
-        .tracker-status {
-            font-weight: 700;
-            font-size: 14px;
-            letter-spacing: 0.5px;
-        }
-
-        .tracker-icon {
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .spinner {
-            width: 16px;
-            height: 16px;
-            border: 2px solid var(--text-tertiary);
-            border-top-color: var(--accent-gold);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        /* Options Sheet */
         .option-section {
             margin-bottom: 24px;
         }
@@ -434,7 +374,6 @@
             font-weight: 700;
             color: var(--text-tertiary);
             text-transform: uppercase;
-            letter-spacing: 1px;
             margin-bottom: 12px;
         }
 
@@ -489,7 +428,6 @@
             font-size: 12px;
         }
 
-        /* Cart Sheet */
         .cart-item {
             padding: 16px;
             background: var(--surface-light);
@@ -557,184 +495,14 @@
             font-weight: 800;
             font-size: 16px;
             cursor: pointer;
-            transition: all 0.2s;
             margin-top: 20px;
+            transition: transform 0.2s;
         }
 
         .confirm-button:active {
             transform: scale(0.98);
         }
 
-        /* Tracker Sheet */
-        .order-tracker {
-            background: var(--surface-light);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 16px;
-        }
-
-        .tracker-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .tracker-id {
-            font-weight: 900;
-            font-size: 18px;
-            color: var(--accent-gold);
-        }
-
-        .tracker-badge {
-            padding: 6px 12px;
-            border-radius: 12px;
-            font-weight: 800;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .badge-waiting {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-secondary);
-        }
-
-        .badge-cooking {
-            background: rgba(245, 158, 11, 0.2);
-            color: var(--accent-yellow);
-        }
-
-        .badge-ready {
-            background: rgba(16, 185, 129, 0.2);
-            color: var(--accent-emerald);
-        }
-
-        .badge-cancelled {
-            background: rgba(239, 68, 68, 0.2);
-            color: var(--danger);
-        }
-
-        .progress-track {
-            height: 6px;
-            background: var(--surface-lighter);
-            border-radius: 3px;
-            overflow: hidden;
-            margin: 16px 0;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent-gold), var(--accent-emerald));
-            width: 5%;
-            transition: width 2s ease;
-            border-radius: 3px;
-        }
-
-        .order-items {
-            margin-top: 20px;
-        }
-
-        .order-item {
-            padding: 12px;
-            background: var(--surface-lighter);
-            border-radius: 12px;
-            margin-bottom: 8px;
-        }
-
-        .order-item.cancelled {
-            opacity: 0.5;
-            text-decoration: line-through;
-        }
-
-        .item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 8px;
-        }
-
-        .item-name {
-            font-weight: 700;
-            font-size: 15px;
-        }
-
-        .item-price {
-            color: var(--accent-gold);
-            font-weight: 700;
-            font-size: 14px;
-        }
-
-        /* New flexbox container for price and cancel button */
-        .item-price-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .item-cancel {
-            background: rgba(255, 69, 58, 0.2);
-            border: 1px solid rgba(255, 69, 58, 0.3);
-            color: #FF453A;
-            width: 32px;
-            height: 32px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s;
-            flex-shrink: 0;
-        }
-
-        .item-cancel:hover {
-            background: rgba(255, 69, 58, 0.3);
-            border-color: rgba(255, 69, 58, 0.5);
-            transform: scale(1.05);
-        }
-
-        .item-cancel:active {
-            transform: scale(0.9);
-        }
-
-        .item-mods {
-            font-size: 13px;
-            color: var(--text-secondary);
-            line-height: 1.4;
-        }
-
-        .tracker-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .action-button {
-            flex: 1;
-            padding: 16px;
-            border-radius: 16px;
-            border: none;
-            font-weight: 700;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-        }
-
-        .cancel-button {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-            border: 1px solid var(--danger);
-        }
-
-        .close-button {
-            background: var(--surface-light);
-            color: var(--text-primary);
-            border: 1px solid var(--glass-border);
-        }
-
-        /* Toast */
         .toast {
             position: fixed;
             top: 100px;
@@ -759,7 +527,6 @@
             transform: translateX(-50%) translateY(0);
         }
 
-        /* Animations */
         @keyframes slideUp {
             from {
                 transform: translateX(-50%) translateY(100px);
@@ -769,50 +536,6 @@
             to {
                 transform: translateX(-50%) translateY(0);
                 opacity: 1;
-            }
-        }
-
-        @keyframes pulse-green {
-            0% {
-                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
-            }
-
-            70% {
-                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
-            }
-
-            100% {
-                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-            }
-        }
-
-        @keyframes pulse-ready {
-
-            0%,
-            100% {
-                box-shadow: 0 0 20px rgba(16, 185, 129, 0);
-            }
-
-            50% {
-                box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
-            }
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        @keyframes bounce-small {
-
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-
-            50% {
-                transform: translateY(-3px);
             }
         }
 
@@ -828,21 +551,6 @@
             }
         }
 
-        @keyframes pulse-red {
-            0% {
-                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
-            }
-
-            70% {
-                box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
-            }
-
-            100% {
-                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
-            }
-        }
-
-        /* Responsive */
         @media (min-width: 600px) {
             .product-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -853,106 +561,106 @@
 
 <body>
     <div class="top-bar">
-        <div class="logo">SyncStay</div>
+        <div class="logo">Rimass Alcham</div>
         <div class="top-right">
             <div class="table-pill" id="tablePill">
                 <i class="fas fa-chair"></i>
-                Tisch <span id="currentTable">1</span>
+                Table <span id="currentTable">1</span>
             </div>
             <button class="cart-btn" id="cartBtn" onclick="openCart()">
                 <i class="fas fa-shopping-bag"></i>
                 <div class="cart-badge" id="cartBadge">0</div>
             </button>
-            <button class="waiter-btn" id="waiterBtn" onclick="callWaiter()">
-                <i class="fas fa-bell"></i>
-            </button>
+            <button class="waiter-btn" id="waiterBtn" onclick="callWaiter()"><i class="fas fa-bell"></i></button>
         </div>
     </div>
 
     <div class="category-bar">
         <div class="category-pills">
-            <div class="category-pill active" onclick="filterMenu('all', this)">🔥 Alle</div>
-            <div class="category-pill" onclick="filterMenu('burger', this)">🍔 Burger</div>
-            <div class="category-pill" onclick="filterMenu('classic', this)">🇩🇪 Klassiker</div>
-            <div class="category-pill" onclick="filterMenu('beilagen', this)">🥔 Beilagen</div>
-            <div class="category-pill" onclick="filterMenu('getranke', this)">🍺 Getränke</div>
+            <div class="category-pill active" onclick="filterMenu('all', this)">🔥 Tous</div>
+            <div class="category-pill" onclick="filterMenu('desserts', this)">🍰 Desserts</div>
+            <div class="category-pill" onclick="filterMenu('sandwiches', this)">🌯 Sandwiches</div>
+            <div class="category-pill" onclick="filterMenu('plats', this)">🍽️ Plats & Grillades</div>
+            <div class="category-pill" onclick="filterMenu('jus', this)">🍹 Jus Frais</div>
         </div>
     </div>
 
     <div class="product-grid" id="productGrid"></div>
 
     <div class="dynamic-island" id="dynamicIsland">
-        <div class="tracker-icon">
-            <div class="spinner" id="trackerSpinner"></div>
-            <i class="fas fa-check" id="trackerCheck" style="display:none;"></i>
-        </div>
-        <div class="tracker-status" id="trackerStatus">Bestätigung...</div>
+        <div class="tracker-icon"><i class="fas fa-check" style="color:var(--accent-emerald)"></i></div>
+        <div class="tracker-status" style="font-weight:700">Commande envoyée</div>
     </div>
 
     <div class="sheet-backdrop" id="sheetBackdrop" onclick="closeAllSheets()"></div>
 
     <div class="bottom-sheet" id="optionsSheet">
-        <button class="sheet-close-btn" onclick="closeSheet('optionsSheet')" aria-label="Close">
-            <i class="fas fa-times"></i>
-        </button>
+        <button class="sheet-close-btn" onclick="closeSheet('optionsSheet')"><i class="fas fa-times"></i></button>
         <div class="sheet-header">
-            <h2 class="sheet-title" id="optionsTitle">Anpassen</h2>
+            <h2 class="sheet-title" id="optionsTitle">Personnaliser</h2>
         </div>
         <div id="optionsList"></div>
         <div class="cart-total" style="margin-top: 30px; padding-top: 30px;">
-            <div class="cart-total-text">Gesamt</div>
-            <div class="cart-total-amount" id="livePrice">0 €</div>
+            <div class="cart-total-text">Total</div>
+            <div class="cart-total-amount" id="livePrice">0 MAD</div>
         </div>
         <div style="display:flex; gap:12px; margin-top:20px;">
-            <button class="action-button close-button" onclick="closeSheet('optionsSheet')">Abbrechen</button>
-            <button class="action-button" style="background:var(--accent-gold);color:#000;"
-                onclick="addToCart(false)">Zum Warenkorb hinzufügen</button>
+            <button class="action-button close-button"
+                style="padding:16px; border-radius:16px; border:1px solid var(--glass-border); background:var(--surface-light); color:#fff; flex:1"
+                onclick="closeSheet('optionsSheet')">Annuler</button>
+            <button class="action-button"
+                style="padding:16px; border-radius:16px; background:var(--accent-gold); color:#000; font-weight:700; border:none; flex:1"
+                onclick="addToCart(false)">Ajouter au panier</button>
         </div>
     </div>
 
     <div class="bottom-sheet" id="cartSheet">
-        <button class="sheet-close-btn" onclick="closeSheet('cartSheet')" aria-label="Close">
-            <i class="fas fa-times"></i>
-        </button>
+        <button class="sheet-close-btn" onclick="closeSheet('cartSheet')"><i class="fas fa-times"></i></button>
         <div class="sheet-header">
-            <h2 class="sheet-title">Ihr Warenkorb</h2>
+            <h2 class="sheet-title">Votre Panier</h2>
         </div>
         <div id="cartList"></div>
         <div class="cart-total">
-            <div class="cart-total-text">Gesamt</div>
-            <div class="cart-total-amount" id="cartTotal">0 €</div>
+            <div class="cart-total-text">Total</div>
+            <div class="cart-total-amount" id="cartTotal">0 MAD</div>
         </div>
-        <button class="confirm-button" onclick="sendBatchOrder()">
-            Bestellen • <span id="cartCount">0</span> Artikel
+        <button class="confirm-button" onclick="openNotesSheet()">
+            Continuer (<span id="cartCount">0</span> articles) <i class="fas fa-arrow-right"
+                style="margin-left:8px;"></i>
         </button>
     </div>
 
-    <div class="bottom-sheet" id="trackerSheet">
-        <button class="sheet-close-btn" onclick="closeSheet('trackerSheet')" aria-label="Close">
-            <i class="fas fa-times"></i>
-        </button>
+    <div class="bottom-sheet" id="notesSheet">
+        <button class="sheet-close-btn" onclick="closeSheet('notesSheet')"><i class="fas fa-times"></i></button>
         <div class="sheet-header">
-            <h2 class="sheet-title">Bestellungsverfolgung</h2>
+            <h2 class="sheet-title">Notes & Allergies</h2>
         </div>
-        <div id="trackerList"></div>
+
+        <div style="margin-bottom: 24px;">
+            <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 12px;">Avez-vous des allergies ou
+                des instructions spéciales pour la cuisine ? (Optionnel)</p>
+            <textarea id="orderNotes" placeholder="Ex: Sans oignons, allergie aux arachides, etc..."
+                style="width: 100%; height: 120px; background: var(--surface-light); border: 1px solid var(--glass-border); border-radius: 16px; padding: 16px; color: var(--text-primary); font-family: inherit; font-size: 15px; resize: none; outline: none; transition: border-color 0.2s;"
+                onfocus="this.style.borderColor='var(--accent-gold)'"
+                onblur="this.style.borderColor='var(--glass-border)'"></textarea>
+        </div>
+
+        <button class="confirm-button" onclick="sendBatchOrder()">
+            <i class="fab fa-whatsapp"></i> Commander via WhatsApp
+        </button>
     </div>
 
     <div class="toast" id="toast"></div>
 
     <div class="bottom-sheet" id="tableSheet">
-        <button class="sheet-close-btn" onclick="closeSheet('tableSheet')" aria-label="Close">
-            <i class="fas fa-times"></i>
-        </button>
+        <button class="sheet-close-btn" onclick="closeSheet('tableSheet')"><i class="fas fa-times"></i></button>
         <div class="sheet-header">
-            <h2 class="sheet-title">Wählen Sie Ihren Tisch</h2>
+            <h2 class="sheet-title">Choisissez votre table</h2>
         </div>
         <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:20px;">
             <script>
-                for (let i = 1; i <= 12; i++) {
-                    document.write(`<div style="background:var(--surface-light); padding:20px; border-radius:16px; text-align:center; font-weight:700; cursor:pointer; border:2px solid transparent; transition:all 0.2s;" 
-                    onclick="setTable(${i})" 
-                    onmouseover="this.style.borderColor='var(--accent-gold)'" 
-                    onmouseout="this.style.borderColor='transparent'">${i}</div>`);
+                for (let i = 1; i <= 15; i++) {
+                    document.write(`<div style="background:var(--surface-light); padding:20px; border-radius:16px; text-align:center; font-weight:700; cursor:pointer; border:2px solid transparent; transition:all 0.2s;" onclick="setTable(${i})" onmouseover="this.style.borderColor='var(--accent-gold)'" onmouseout="this.style.borderColor='transparent'">${i}</div>`);
                 }
             </script>
         </div>
@@ -960,393 +668,109 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        // Product data - Premium German Restaurant
         const products = {
-            "burger_klassiker": {
-                name: "Der Klassiker Burger",
-                price: 14.90,
-                cat: "burger",
-                img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&fit=crop",
-                desc: "Rindfleisch, Cheddar, Speck, Röstzwiebeln",
-                options: {
-                    sauces: ["Senf", "Ketchup", "Mayonnaise", "Remoulade", "Rahmsoße"],
-                    extras: [{ name: "Extra Käse", price: 1.50 }, { name: "Doppelt Fleisch", price: 4.00 }],
-                    removals: ["Ohne Zwiebeln", "Ohne Speck", "Ohne Käse"]
-                }
-            },
-            "burger_laugen": {
-                name: "Laugen-Burger",
-                price: 16.50,
-                cat: "burger",
-                img: "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=600&fit=crop",
-                desc: "In Laugenbrötchen, Bergkäse, Ruccola",
-                options: {
-                    sauces: ["Senf", "Kräutermayonnaise", "Rahmsoße"],
-                    extras: [{ name: "Avocado", price: 2.00 }, { name: "Speck", price: 2.50 }],
-                    removals: ["Ohne Ruccola", "Ohne Zwiebeln"]
-                }
-            },
-            "burger_bbq": {
-                name: "BBQ Bacon Burger",
-                price: 17.50,
-                cat: "burger",
-                img: "https://th.bing.com/th/id/OIP.hT7bKrMCXgilPN1Hpdh-VQHaEJ?w=333&h=187&c=7&r=0&o=7&dpr=1.4&pid=1.7&rm=3",
-                desc: "BBQ-Sauce, Cheddar, Speck, Zwiebelringe",
-                options: {
-                    sauces: ["BBQ-Sauce", "Chipotle", "Knoblauchsoße"],
-                    extras: [{ name: "Extra Speck", price: 2.50 }, { name: "Pulled Pork", price: 4.50 }],
-                    removals: ["Ohne Speck", "Ohne Zwiebeln"]
-                }
-            },
-            "classic_currywurst": {
-                name: "Berliner Currywurst",
-                price: 12.50,
-                cat: "classic",
-                img: "https://knack-rucksack.fr/wp-content/uploads/2022/10/currywurst-berlin.jpg",
-                desc: "Mit Pommes Frites und Currysoße",
-                options: {
-                    sauces: ["Senf", "Ketchup", "Curry", "Scharf"],
-                    extras: [{ name: "Extra Pommes", price: 3.00 }, { name: "Bratwurst dazu", price: 5.50 }],
-                    removals: ["Ohne Pommes", "Ohne Soße"]
-                }
-            },
-            "classic_schnitzel": {
-                name: "Wiener Schnitzel",
-                price: 22.90,
-                cat: "classic",
-                img: "https://die-frau-am-grill.de/wp-content/uploads/wiener-schnitzel-rezept.jpg",
-                desc: "Kalbsschnitzel mit Kartoffelsalat",
-                options: {
-                    sauces: ["Zitrone", "Preiselbeeren", "Rahmsoße"],
-                    extras: [{ name: "Spiegelei", price: 2.00 }, { name: "Bratkartoffeln statt Salat", price: 0 }],
-                    removals: ["Ohne Kartoffelsalat", "Ohne Zitrone"]
-                }
-            },
-            "classic_spaetzle": {
-                name: "Käsespätzle",
-                price: 14.50,
-                cat: "classic",
-                img: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=600&fit=crop",
-                desc: "Mit gerösteten Zwiebeln und Salat",
-                options: {
-                    sauces: ["Röstzwiebeln extra", "Schnittlauch"],
-                    extras: [{ name: "Speckwürfel", price: 2.50 }, { name: "Extra Käse", price: 2.00 }],
-                    removals: ["Ohne Zwiebeln", "Ohne Salat"]
-                }
-            },
-            "beilagen_pommes": {
-                name: "Pommes Frites",
-                price: 4.50,
-                cat: "beilagen",
-                img: "https://img.freepik.com/premium-photo/french-fries-photography-restaurant_929907-175.jpg",
-                desc: "Knusprige Pommes, rot-weiß",
-                options: {
-                    sauces: ["Ketchup", "Mayonnaise", "Currysoße", "Tartarsoße"],
-                    extras: [{ name: "Mit Käse überbacken", price: 2.00 }]
-                }
-            },
-            "beilagen_bratkartoffeln": {
-                name: "Bratkartoffeln",
-                price: 5.50,
-                cat: "beilagen",
-                img: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=600&fit=crop",
-                desc: "Mit Speck und Zwiebeln",
-                options: {
-                    sauces: ["Kräuterquark", "Senf"],
-                    extras: [{ name: "Spiegelei", price: 2.00 }],
-                    removals: ["Ohne Speck", "Ohne Zwiebeln"]
-                }
-            },
-            "beilagen_gurkensalat": {
-                name: "Gurkensalat",
-                price: 4.00,
-                cat: "beilagen",
-                img: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&fit=crop",
-                desc: "Mit Dill und Sahne",
-                options: {
-                    removals: ["Ohne Dill", "Ohne Zwiebeln"]
-                }
-            },
-            "getranke_spezi": {
-                name: "Paulaner Spezi",
-                price: 3.50,
-                cat: "getranke",
-                img: "https://shop.getraenke-baerlin.de/media/6b/d5/89/1605390458/SPEZI_K_05l_FRONTAL_mit_FLASCHE_150dpi_RGB_2001.jpg",
-                desc: "0,33l Glasflasche",
-                options: { removals: ["Ohne Eiswürfel", "Ohne Strohhalm"] }
-            },
-            "getranke_apfelschorle": {
-                name: "Apfelschorle",
-                price: 3.20,
-                cat: "getranke",
-                img: "https://thirstytales.com/wp-content/uploads/2024/09/Apple-Cider-Sparkler-Mocktail-Recipe-768x768.jpeg",
-                desc: "Apfelsaft mit Sprudelwasser",
-                options: { removals: ["Ohne Eiswürfel"] }
-            },
-            "getranke_helles": {
-                name: "Helles Bier",
-                price: 4.90,
-                cat: "getranke",
-                img: "https://www.verywellfit.com/thmb/hsC5kq_hZZBrcSqsRyeh9n3HESw=/2121x1414/filters:fill(FFDB5D,1)/GettyImages-675621379-5be1ebb246e0fb00266d70b0.jpg",
-                desc: "0,5l vom Fass",
-                options: { removals: ["Ohne Schaum"] }
-            },
-            "getranke_weizen": {
-                name: "Alkoholfreies Weizen",
-                price: 4.50,
-                cat: "getranke",
-                img: "https://img.freepik.com/premium-photo/beer-glass-wooden-table-pub-restaurant_29409-63.jpg",
-                desc: "0,5l alkoholfrei",
-                options: { removals: ["Ohne Zitrone"] }
-            }
+            "s1": { name: "Chawarma Mixte", price: 30.00, cat: "sandwiches", img: "Gemini_Generated_Image_a1ak0sa1ak0sa1ak.png", desc: "شاورما ميكس", options: { extras: [{ name: "Frites", price: 8.00 }] } },
+            "s2": { name: "Chawarma Viande", price: 33.00, cat: "sandwiches", img: "Gemini_Generated_Image_ylcqowylcqowylcq.png", desc: "شاورما لحم", options: { extras: [{ name: "Frites", price: 8.00 }] } },
+            "s3": { name: "Chawarma Poulet", price: 25.00, cat: "sandwiches", img: "Gemini_Generated_Image_of9qc7of9qc7of9q.png", desc: "شاورما دجاج" },
+            "s4": { name: "Chawarma Arabie Poulet", price: 45.00, cat: "sandwiches", img: "Gemini_Generated_Image_y9t3i2y9t3i2y9t3.png", desc: "شاورما عربي دجاج" },
+            "s5": { name: "Chawarma Arabie Viande", price: 55.00, cat: "sandwiches", img: "Gemini_Generated_Image_qt10o8qt10o8qt10.png", desc: "شاورما عربي لحم" },
+            "s6": { name: "Chawarma Arabie Mixte", price: 50.00, cat: "sandwiches", img: "Gemini_Generated_Image_o7568fo7568fo756.png", desc: "شاورما عربي ميكس" },
+            "s7": { name: "Falafel", price: 20.00, cat: "sandwiches", img: "Gemini_Generated_Image_sn5trtsn5trtsn5t.png", desc: "فلافل" },
+            "s8": { name: "Chich Taouque", price: 35.00, cat: "sandwiches", img: "Gemini_Generated_Image_3tr95g3tr95g3tr9.png", desc: "شيش طاووق" },
+            "s9": { name: "Crispy Poitrine De Poulet (4 Morceaux)", price: 35.00, cat: "sandwiches", img: "Gemini_Generated_Image_8vvbyq8vvbyq8vvb.png", desc: "كريسبي دجاج 4 قطع" },
+            "s10": { name: "Frite", price: 8.00, cat: "sandwiches", img: "Gemini_Generated_Image_ltu5zmltu5zmltu5.png", desc: "فريت" },
+            "s11": { name: "Sandwich Viande Hachée Normale", price: 30.00, cat: "sandwiches", img: "Gemini_Generated_Image_pbuzutpbuzutpbuz.png", desc: "سندويش كفتة لحم عادي" },
+            "s12": { name: "Sandwich Viande Hachée Supême", price: 40.00, cat: "sandwiches", img: "Gemini_Generated_Image_rdjuaprdjuaprdju.png", desc: "سندويش كفتة لحم سوبريم" },
+            "s13": { name: "Sandwich Poulet Hachée Normale", price: 25.00, cat: "sandwiches", img: "Gemini_Generated_Image_jwojbgjwojbgjwoj.png", desc: "سندويش كفتة دجاج عادي" },
+            "s14": { name: "Sandwich Poulet Hachée Supême", price: 35.00, cat: "sandwiches", img: "Gemini_Generated_Image_eeilcyeeilcyeeil.png", desc: "سندويش كفتة دجاج سوبريم" },
+
+            "p1": { name: "Plat Chawarma Mixte", price: 60.00, cat: "plats", img: "Gemini_Generated_Image_wyca3wyca3wyca3w.png", desc: "طبق شاورما ميكس" },
+            "p2": { name: "Plat Chawarma Viande", price: 65.00, cat: "plats", img: "Gemini_Generated_Image_vrieb6vrieb6vrie.png", desc: "طبق شاورما لحم" },
+            "p3": { name: "Plat Chawarma Poulet", price: 55.00, cat: "plats", img: "Gemini_Generated_Image_sdan0gsdan0gsdan.png", desc: "طبق شاورما دجاج" },
+            "p4": { name: "Plat Crispy 4 Morceaux De Poulet", price: 50.00, cat: "plats", img: "Gemini_Generated_Image_2eg9ju2eg9ju2eg9.png", desc: "طبق كريسبي 4 قطع" },
+            "p5": { name: "Brochettes Poulet (3 Qodsban)", price: 55.00, cat: "plats", img: "Gemini_Generated_Image_99zuas99zuas99zu.png", desc: "3 قضبان شيش طاووق" },
+            "p6": { name: "Kabab Viande (3 Qodsban)", price: 65.00, cat: "plats", img: "Gemini_Generated_Image_28bacd28bacd28ba.png", desc: "3 قضبان كباب لحم" },
+            "p7": { name: "Kabab Poulet (3 Qodsban)", price: 55.00, cat: "plats", img: "Gemini_Generated_Image_hqmkgmhqmkgmhqmk.png", desc: "3 قضبان كباب دجاج" },
+            "p8": { name: "Brochettes Mixte 1 Personne", price: 70.00, cat: "plats", img: "Gemini_Generated_Image_gvzl39gvzl39gvzl.png", desc: "مشاوي ميكس شخص واحد" },
+            "p9": { name: "Brochettes Viande (3 Qodsban)", price: 80.00, cat: "plats", img: "Gemini_Generated_Image_ubly1fubly1fubly.png", desc: "3 قضبان شقف لحم" },
+            "p10": { name: "Plat Rimass Alcham", price: 80.00, cat: "plats", img: "Gemini_Generated_Image_uhg4weuhg4weuhg4.png", desc: "طبق ريماس الشام" },
+            "p11": { name: "Brochettes Mixte 4 Personnes", price: 300.00, cat: "plats", img: "Gemini_Generated_Image_ysqylzysqylzysqy.png", desc: "مشاوي ميكس 4 أشخاص" },
+            "p12": { name: "Kabsa Viande", price: 85.00, cat: "plats", img: "Gemini_Generated_Image_c7cww4c7cww4c7cw.png", desc: "كبسة لحم" },
+            "p13": { name: "Kabsa Poulet", price: 70.00, cat: "plats", img: "Gemini_Generated_Image_gkakt5gkakt5gkak.png", desc: "كبسة دجاج" },
+            "p14": { name: "Riz Kabsa", price: 30.00, cat: "plats", img: "Gemini_Generated_Image_dh467fdh467fdh46.png", desc: "رز كبسة" },
+            "p15": { name: "Fatteh Chawarma Viande", price: 75.00, cat: "plats", img: "Gemini_Generated_Image_vem49fvem49fvem4.png", desc: "فتة شاورما لحم" },
+            "p16": { name: "Fatteh Chawarma Poulet", price: 65.00, cat: "plats", img: "Gemini_Generated_Image_42j9vz42j9vz42j9.png", desc: "فتة شاورما دجاج" },
+
+            "d1": { name: "Ouch Boulboul", price: 10.00, cat: "desserts", img: "Gemini_Generated_Image_jkbnhrjkbnhrjkbn.png", desc: "2 عش بلبل" },
+            "d2": { name: "Bas Ousafi", price: 10.00, cat: "desserts", img: "Gemini_Generated_Image_vee0gxvee0gxvee0.png", desc: "بسبوسة بالقشطة" },
+            "d3": { name: "Baglawa", price: 10.00, cat: "desserts", img: "Gemini_Generated_Image_12n41g12n41g12n4.png", desc: "بقلاوة" },
+            "d4": { name: "Mhalabia", price: 15.00, cat: "desserts", img: "Gemini_Generated_Image_ksdfqzksdfqzksdf.png", desc: "مهلبية شامية" },
+            "d5": { name: "Warbat Fruits Secs", price: 15.00, cat: "desserts", img: "Gemini_Generated_Image_qs6khgqs6khgqs6k.png", desc: "وربات بالمكسرات" },
+            "d6": { name: "Kunafa Au Fromage (1 Personne)", price: 35.00, cat: "desserts", img: "Gemini_Generated_Image_33u6gi33u6gi33u6.png", desc: "كنافة بالجبنة شخص واحد" },
+            "d7": { name: "Kunafa Au Fromage (2 Personnes)", price: 55.00, cat: "desserts", img: "Gemini_Generated_Image_i7ajo1i7ajo1i7aj.png", desc: "كنافة بالجبنة شخصين" },
+            "d8": { name: "Kunafa A La Creme", price: 12.00, cat: "desserts", img: "Gemini_Generated_Image_u37pe3u37pe3u37p.png", desc: "كنافة بالقشطة" },
+
+            "j1": { name: "Jus Carotte", price: 18.00, cat: "jus", img: "Gemini_Generated_Image_sfd66qsfd66qsfd6.png", desc: "جزر" },
+            "j2": { name: "Jus Pomme", price: 22.00, cat: "jus", img: "Gemini_Generated_Image_pc2o9npc2o9npc2o.png", desc: "تفاح" },
+            "j3": { name: "Jus Orange", price: 17.00, cat: "jus", img: "Gemini_Generated_Image_44yns644yns644yn.png", desc: "برتقال" },
+            "j4": { name: "Jus Citron A La Menthe", price: 22.00, cat: "jus", img: "Gemini_Generated_Image_7zjl2o7zjl2o7zjl.png", desc: "حامض بالنعناع" },
+            "j5": { name: "Jus Banane Au Lait", price: 19.00, cat: "jus", img: "Gemini_Generated_Image_mv1r0rmv1r0rmv1r.png", desc: "موز حليب" },
+            "j6": { name: "Jus Fraise", price: 23.00, cat: "jus", img: "Gemini_Generated_Image_ey0ix5ey0ix5ey0i.png", desc: "فريز" },
+            "j7": { name: "Jus Kiwi", price: 22.00, cat: "jus", img: "Gemini_Generated_Image_910re4910re4910r.png", desc: "كيوي" },
+            "j8": { name: "Jus Mangue", price: 23.00, cat: "jus", img: "Gemini_Generated_Image_ghreb8ghreb8ghre.png", desc: "مانجو" },
+            "j9": { name: "Jus Papaye", price: 22.00, cat: "jus", img: "Gemini_Generated_Image_7dr7sj7dr7sj7dr7.png", desc: "باباي" },
+            "j10": { name: "Jus Ananas", price: 22.00, cat: "jus", img: "Gemini_Generated_Image_a89uq1a89uq1a89u.png", desc: "أناناس" },
+            "j11": { name: "Jus Concombre", price: 15.00, cat: "jus", img: "Gemini_Generated_Image_guur61guur61guur.png", desc: "خيار" },
+            "j12": { name: "Jus Pêche", price: 23.00, cat: "jus", img: "Gemini_Generated_Image_pc2o9npc2o9npc2o.png", desc: "خوخ" },
+            "j13": { name: "Jus Betterave", price: 18.00, cat: "jus", img: "Gemini_Generated_Image_hzwe2rhzwe2rhzwe.png", desc: "بنجر باربا" }
         };
 
-        // ==========================================
-        // 🚀 MULTI-TENANT: SMART SUBDOMAIN EXTRACTION
-        // ==========================================
-        let TENANT_ID = window.location.hostname.split('.')[0];
-
-        // Safety fallback for local testing or generic domains
-        if (TENANT_ID === 'localhost' || TENANT_ID === '127' || TENANT_ID === 'app' || TENANT_ID === 'syncstay') {
-            const urlParams = new URLSearchParams(window.location.search);
-            TENANT_ID = urlParams.get('r') || 'default';
-        }
-        // ==========================================
-
-        // Socket connection with reconnection logic
         let socket;
-        let reconnectAttempts = 0;
-        const maxReconnectAttempts = 5;
-
         function connectSocket() {
             try {
-                socket = io({
-                    reconnection: true,
-                    reconnectionAttempts: maxReconnectAttempts,
-                    reconnectionDelay: 1000,
-                    timeout: 20000
-                });
-
-                console.log('🔄 Connecting to server...');
-
-                socket.on('connect', () => {
-                    console.log('✅ Socket connected:', socket.id);
-                    reconnectAttempts = 0;
-
-                    // Join tenant room
-                    socket.emit('join_tenant', TENANT_ID);
-
-                    // Immediately attempt session restoration
-                    const savedOrderId = localStorage.getItem('syncstay_active_order');
-                    if (savedOrderId) {
-                        console.log('🔄 Attempting to restore session:', savedOrderId);
-                        socket.emit('restore_session', savedOrderId);
-                    }
-
-                    // Check for pending orders to sync
-                    const pendingOrders = JSON.parse(localStorage.getItem('syncstay_pending_orders') || '[]');
-                    if (pendingOrders.length > 0) {
-                        console.log('🔄 Syncing pending orders:', pendingOrders.length);
-                        pendingOrders.forEach(order => {
-                            socket.emit('new_order', order);
-                        });
-                        localStorage.removeItem('syncstay_pending_orders');
-                    }
-                });
-
-                socket.on('session_restored', (order) => {
-                    console.log('✅ Session restored:', order.shortId);
-
-                    // Clear any existing orders and add the restored one
-                    activeOrders = [order];
-
-                    // Update UI immediately
-                    renderTracker();
-                    updateDynamicIsland();
-
-                    // If order is ready or cancelled, show appropriate state
-                    if (order.status === 'Prêt à être servi') {
-                        const island = document.getElementById("dynamicIsland");
-                        if (island) {
-                            island.classList.add("ready");
-                            island.classList.remove("critical");
-                        }
-                    } else if (order.status === 'Annulé' || order.status === 'Storniert') {
-                        const island = document.getElementById("dynamicIsland");
-                        if (island) {
-                            island.classList.add("critical");
-                            island.classList.remove("ready");
-                        }
-                    }
-
-                    showToast("Session restored successfully!");
-                });
-
-                socket.on('session_expired', () => {
-                    console.log('⚠️ Session expired');
-                    localStorage.removeItem('syncstay_active_order');
-                    activeOrders = [];
-                    updateDynamicIsland();
-                    showToast("Previous session expired");
-                });
-
-                socket.on('order_confirmed', (data) => {
-                    console.log('✅ Order confirmed by server:', data.shortId);
-                    // The order is already in activeOrders from sendOrderToServer
-                    // Just ensure UI is updated
-                    renderTracker();
-                    updateDynamicIsland();
-                });
-
-                socket.on('status_change', (data) => {
-                    console.log('📊 Status update:', data);
-                    const order = activeOrders.find(o => o.orderId === data.orderId);
-                    if (order) {
-                        order.status = data.status;
-                        order.progress = data.progress || 100;
-
-                        if (data.status === 'Prêt à être servi') {
-                            readyAudio.currentTime = 0;
-                            readyAudio.play().catch(e => console.log("Audio error:", e));
-
-                            if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-
-                            // Auto-remove after 10 seconds
-                            setTimeout(() => {
-                                activeOrders = activeOrders.filter(o => o.orderId !== data.orderId);
-                                localStorage.removeItem('syncstay_active_order');
-                                renderTracker();
-                                updateDynamicIsland();
-                            }, 10000);
-                        }
-
-                        renderTracker();
-                        updateDynamicIsland();
-                    }
-                });
-
-                socket.on('alert_customer', (data) => {
-                    console.log('⚠️ Alert from kitchen:', data);
-
-                    const order = activeOrders.find(o => o.orderId === data.orderId);
-                    if (order) {
-                        if (data.type === 'order') {
-                            showToast("⚠️ Ihre Bestellung wurde von der Küche storniert");
-                            order.status = "Storniert";
-                            order.canCancel = false;
-
-                            // Remove from localStorage when cancelled
-                            localStorage.removeItem('syncstay_active_order');
-
-                            // Auto-remove after user acknowledges
-                            setTimeout(() => {
-                                activeOrders = activeOrders.filter(o => o.orderId !== data.orderId);
-                                renderTracker();
-                                updateDynamicIsland();
-                            }, 10000);
-
-                        } else if (data.type === 'item') {
-                            showToast(`⚠️ Artikel nicht verfügbar: ${data.itemName}`);
-                            if (order.items[data.itemIndex]) {
-                                order.items[data.itemIndex].cancelled = true;
-                            }
-                        }
-
-                        if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-                        readyAudio.play().catch(e => console.log("Audio warning blocked"));
-
-                        renderTracker();
-                        updateDynamicIsland();
-                    }
-                });
-
-                socket.on('status_update', (data) => {
-                    const order = activeOrders.find(o => o.orderId === data.orderId);
-                    if (order && data.hasOwnProperty('canCancel')) {
-                        order.canCancel = data.canCancel;
-                        renderTracker();
-                    }
-                });
-
-                socket.on('disconnect', () => {
-                    console.log('🔌 Socket disconnected');
-                    showToast("Connection lost - reconnecting...");
-                });
-
-                socket.on('connect_error', (error) => {
-                    console.log('❌ Connection error:', error);
-                    reconnectAttempts++;
-                    if (reconnectAttempts >= maxReconnectAttempts) {
-                        showToast("Offline mode - reconnecting when possible");
-                    }
-                });
-
+                socket = io({ reconnection: true, timeout: 20000 });
             } catch (e) {
-                console.log("❌ Socket connection failed:", e);
+                console.log("Socket connection failed:", e);
             }
         }
-
-        // Initialize connection
         connectSocket();
-
-        const readyAudio = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
-        readyAudio.volume = 0.7;
 
         let cart = [], activeOrders = [], currentKey = "", basePrice = 0;
         let tableNum = localStorage.getItem('staySync_table') || "1";
 
-        // Initialize
         window.onload = function () {
             document.getElementById("currentTable").innerText = tableNum;
             renderMenu('all');
             updateCartUI();
-
-            // Set active category
-            document.querySelectorAll('.category-pill').forEach(b => b.classList.remove('active'));
-            document.querySelector('.category-pill').classList.add('active');
         };
 
-        // Heartbeat to keep connection alive
-        setInterval(() => {
-            if (socket && socket.connected) {
-                socket.emit('ping');
-            }
-        }, 30000);
-
-
-        // Table selection
-        document.getElementById('tablePill').addEventListener('click', () => {
-            openSheet('tableSheet');
-        });
+        document.getElementById('tablePill').addEventListener('click', () => { openSheet('tableSheet'); });
 
         function setTable(n) {
             tableNum = n;
             document.getElementById("currentTable").innerText = n;
             localStorage.setItem('staySync_table', n);
             closeSheet('tableSheet');
-            showToast(`Tisch ${n} ausgewählt`);
+            showToast(`Table ${n} sélectionnée`);
         }
 
-        // Menu rendering
         function renderMenu(cat) {
             const grid = document.getElementById("productGrid");
             if (!grid) return;
-
             grid.innerHTML = "";
-
             for (let key in products) {
                 let p = products[key];
                 if (cat !== 'all' && p.cat !== cat) continue;
-
                 grid.innerHTML += `
                     <div class="product-card" onclick="openProduct('${key}')">
                         <img src="${p.img}" alt="${p.name}" class="product-image">
                         <div class="image-overlay"></div>
+               
                         <div class="product-info">
                             <h3 class="product-title">${p.name}</h3>
                             <p class="product-desc">${p.desc}</p>
                             <div class="product-footer">
-                                <div class="product-price">${p.price.toFixed(2)} €</div>
+                                <div class="product-price">${p.price.toFixed(2)} MAD</div>
                                 <button class="add-button" onclick="event.stopPropagation(); openProduct('${key}')">+</button>
                             </div>
                         </div>
@@ -1360,648 +784,146 @@
             renderMenu(cat);
         }
 
-        // Product options
         function openProduct(key) {
-            // Reset state first to clear any previous selections
-            resetProductState();
-
-            currentKey = key;
-            const p = products[key];
-            basePrice = p.price;
-
+            selectedOptions = []; extraPrices = 0; currentKey = key;
+            const p = products[key]; basePrice = p.price;
             document.getElementById("optionsTitle").innerText = p.name;
 
             let html = "";
-            if (p.options) {
-                if (p.options.sauces) {
-                    html += `<div class="option-section">
-                        <div class="section-title">Soßen (Max 2)</div>`;
-                    p.options.sauces.forEach(s => {
-                        html += `<div class="option-item" onclick="toggleOption(this, '${s}', 0, 'sauce')">
-                            <div class="option-name">${s}</div>
+            if (p.options && p.options.extras) {
+                html += `<div class="option-section"><div class="section-title">Extras</div>`;
+                p.options.extras.forEach(ex => {
+                    html += `<div class="option-item" onclick="toggleOption(this, '${ex.name}', ${ex.price})">
+                        <div class="option-name">${ex.name}</div>
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <div class="option-price">+${ex.price.toFixed(2)} MAD</div>
                             <div class="option-checkbox"></div>
-                        </div>`;
-                    });
-                    html += `</div>`;
-                }
-                if (p.options.extras) {
-                    html += `<div class="option-section">
-                        <div class="section-title">Extras</div>`;
-                    p.options.extras.forEach(ex => {
-                        html += `<div class="option-item" onclick="toggleOption(this, '${ex.name}', ${ex.price}, 'extra')">
-                            <div class="option-name">${ex.name}</div>
-                            <div style="display:flex; align-items:center; gap:12px;">
-                                <div class="option-price">+${ex.price.toFixed(2)} €</div>
-                                <div class="option-checkbox"></div>
-                            </div>
-                        </div>`;
-                    });
-                    html += `</div>`;
-                }
-                if (p.options.removals) {
-                    html += `<div class="option-section">
-                        <div class="section-title">Weglassen</div>`;
-                    p.options.removals.forEach(r => {
-                        html += `<div class="option-item" onclick="toggleOption(this, '${r}', 0, 'removal')">
-                            <div class="option-name" style="color:var(--danger)">${r}</div>
-                            <div class="option-checkbox"></div>
-                        </div>`;
-                    });
-                    html += `</div>`;
-                }
+                        </div>
+                    </div>`;
+                });
+                html += `</div>`;
             }
 
-            document.getElementById("optionsList").innerHTML = html || "<p style='text-align:center;color:var(--text-tertiary);margin-top:20px'>Keine Optionen verfügbar</p>";
-            updatePrice();
-            openSheet("optionsSheet");
+            document.getElementById("optionsList").innerHTML = html || "<p style='text-align:center;color:var(--text-tertiary);margin-top:20px'>Aucune option disponible</p>";
+            updatePrice(); openSheet("optionsSheet");
         }
 
-        let selectedOptions = [];
-        let extraPrices = 0;
+        let selectedOptions = []; let extraPrices = 0;
 
-        // Reset product state to clear sticky selections
-        function resetProductState() {
-            // Clear selection arrays and prices
-            selectedOptions = [];
-            extraPrices = 0;
-
-            // Reset visual state of all checkboxes
-            const optionsSheet = document.getElementById('optionsSheet');
-            if (optionsSheet) {
-                optionsSheet.querySelectorAll('.option-checkbox').forEach(checkbox => {
-                    checkbox.classList.remove('selected');
-                });
-                optionsSheet.querySelectorAll('.option-item').forEach(item => {
-                    item.classList.remove('selected');
-                });
-            }
-
-            // Reset price display to base price (will be updated by updatePrice)
-            if (typeof basePrice === 'number') {
-                updatePrice();
-            }
-        }
-
-        function toggleOption(element, name, price = 0, type = '') {
+        function toggleOption(element, name, price = 0) {
             const checkbox = element.querySelector('.option-checkbox');
-            const isSelected = checkbox.classList.contains('selected');
-
-            if (isSelected) {
+            if (checkbox.classList.contains('selected')) {
                 checkbox.classList.remove('selected');
-                element.classList.remove('selected');
                 selectedOptions = selectedOptions.filter(opt => opt !== name);
-                if (price > 0) extraPrices -= price;
+                extraPrices -= price;
             } else {
-                // Check for max sauces only if type is 'sauce'
-                if (type === 'sauce') {
-                    const sauceCount = selectedOptions.filter((opt, idx) => {
-                        // Count only sauces by checking all selected items
-                        const optionElements = document.querySelectorAll('.option-item.selected');
-                        let count = 0;
-                        optionElements.forEach(el => {
-                            const onclick = el.getAttribute('onclick');
-                            if (onclick && onclick.includes("'sauce'")) {
-                                count++;
-                            }
-                        });
-                        return false; // Not used, we use count below
-                    });
-
-                    // Count actual selected sauces
-                    let actualSauceCount = 0;
-                    document.querySelectorAll('.option-item.selected').forEach(el => {
-                        const onclick = el.getAttribute('onclick');
-                        if (onclick && onclick.includes("'sauce'")) {
-                            actualSauceCount++;
-                        }
-                    });
-
-                    if (actualSauceCount >= 2) {
-                        showToast("Maximal 2 Soßen erlaubt");
-                        return;
-                    }
-                }
-
                 checkbox.classList.add('selected');
-                element.classList.add('selected');
                 selectedOptions.push(name);
-                if (price > 0) extraPrices += price;
+                extraPrices += price;
             }
-
             updatePrice();
         }
 
-        function updatePrice() {
-            let total = basePrice + extraPrices;
-            document.getElementById("livePrice").innerText = total.toFixed(2) + " €";
-        }
+        function updatePrice() { document.getElementById("livePrice").innerText = (basePrice + extraPrices).toFixed(2) + " MAD"; }
 
-        // Cart functions
         function addToCart(instant = false) {
             const p = products[currentKey];
-            let finalPrice = basePrice + extraPrices;
-
-            cart.push({
-                name: p.name,
-                price: finalPrice,
-                qty: 1,
-                mods: [...selectedOptions],
-                productKey: currentKey
-            });
-
-            // Reset
-            selectedOptions = [];
-            extraPrices = 0;
-
-            if (instant) {
-                sendBatchOrder();
-            } else {
-                updateCartUI();
-                showToast("Zum Warenkorb hinzugefügt!");
-            }
-            closeSheet("optionsSheet");
+            cart.push({ name: p.name, price: basePrice + extraPrices, qty: 1, mods: [...selectedOptions] });
+            updateCartUI(); showToast("Ajouté au panier !"); closeSheet("optionsSheet");
         }
 
         function updateCartUI() {
-            const count = cart.length;
             const total = cart.reduce((sum, item) => sum + item.price, 0);
 
-            document.getElementById("cartCount").innerText = count;
-            document.getElementById("cartTotal").innerText = total.toFixed(2) + " €";
+            // This is the important line that was crashing before!
+            document.getElementById("cartCount").innerText = cart.length;
 
-            // Update cart badge in top bar
+            document.getElementById("cartTotal").innerText = total.toFixed(2) + " MAD";
+
             const badge = document.getElementById("cartBadge");
-            if (badge) {
-                badge.innerText = count;
-                if (count > 0) {
-                    badge.classList.add("show");
-                } else {
-                    badge.classList.remove("show");
-                }
-            }
+            badge.innerText = cart.length;
+            cart.length > 0 ? badge.classList.add("show") : badge.classList.remove("show");
 
-            // Update cart list
             let html = "";
             cart.forEach((item, i) => {
-                const modsText = item.mods && item.mods.length > 0 ?
-                    `<div class="cart-item-mods">${item.mods.join(", ")}</div>` : '';
-
+                const mods = item.mods.length > 0 ? `<div class="cart-item-mods">${item.mods.join(", ")}</div>` : '';
                 html += `
                     <div class="cart-item">
                         <div class="cart-item-info">
-                            <h4>${item.name}</h4>
-                            ${modsText}
-                            <div class="cart-item-price">${item.price.toFixed(2)} €</div>
+                            <h4>${item.name}</h4>${mods}
+                            <div class="cart-item-price">${item.price.toFixed(2)} MAD</div>
                         </div>
-                        <button class="cart-remove" onclick="removeFromCart(${i})">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                        <button class="cart-remove" onclick="removeFromCart(${i})"><i class="fas fa-trash"></i></button>
                     </div>`;
             });
-
-            document.getElementById("cartList").innerHTML = html ||
-                '<div style="text-align:center;padding:40px;color:var(--text-tertiary)">Ihr Warenkorb ist leer</div>';
+            document.getElementById("cartList").innerHTML = html || '<div style="text-align:center;padding:40px;color:var(--text-tertiary)">Votre panier est vide</div>';
         }
 
-        function removeFromCart(index) {
-            cart.splice(index, 1);
-            updateCartUI();
-            showToast("Artikel entfernt");
+        function removeFromCart(index) { cart.splice(index, 1); updateCartUI(); }
+        function openCart() { updateCartUI(); openSheet("cartSheet"); }
+
+        function openNotesSheet() {
+            if (cart.length === 0) { showToast("Le panier est vide !"); return; }
+            closeSheet('cartSheet');
+            openSheet('notesSheet');
         }
 
-        function openCart() {
-            updateCartUI();
-            openSheet("cartSheet");
-        }
+        const restaurantPhone = "212605080812";
 
-        // Order functions
         function sendBatchOrder() {
-            if (cart.length === 0) {
-                showToast("Warenkorb ist leer!");
-                return;
+            if (cart.length === 0) { showToast("Le panier est vide !"); return; }
+
+            const notesInput = document.getElementById('orderNotes').value.trim();
+
+            const orderObj = { orderId: Date.now(), table: tableNum, items: JSON.parse(JSON.stringify(cart)), notes: notesInput };
+            if (socket && socket.connected) { socket.emit('new_order', orderObj); }
+
+            let message = `*Nouvelle Commande - Table #${tableNum}* 🍽️%0A------------------------%0A`;
+            let total = 0;
+            cart.forEach(item => {
+                message += `▪ ${item.qty}x ${item.name} (${item.price} MAD)%0A`;
+                if (item.mods && item.mods.length > 0) message += `   _Note: ${item.mods.join(", ")}_%0A`;
+                total += item.price;
+            });
+            message += `------------------------%0A*Total: ${total} MAD*%0A`;
+
+            if (notesInput) {
+                message += `%0A*Notes / Allergies:*%0A_${encodeURIComponent(notesInput)}_%0A`;
             }
 
-            sendOrderToServer(cart);
+            message += `%0A_Merci de confirmer la préparation._`;
+
             cart = [];
+            document.getElementById('orderNotes').value = ""; // clear notes after sending
             updateCartUI();
-            closeSheet("cartSheet");
-        }
+            closeSheet("notesSheet");
 
-        function sendOrderToServer(items) {
-            const timestamp = Date.now();
-            const orderId = timestamp;
-            const shortId = timestamp.toString().slice(-4);
-
-            const orderObj = {
-                orderId: orderId,
-                shortId: shortId,
-                table: tableNum,
-                tableNumber: tableNum,
-                items: JSON.parse(JSON.stringify(items)),
-                status: "In Warteschlange",
-                progress: 5,
-                canCancel: true,
-                createdAt: timestamp,
-                tenantId: TENANT_ID
-            };
-
-            // Save to localStorage IMMEDIATELY for persistence
-            localStorage.setItem('syncstay_active_order', orderObj.orderId);
-            console.log('💾 Saved order to localStorage:', orderId);
-
-            activeOrders.unshift(orderObj);
-            renderTracker();
-            updateDynamicIsland();
-
-            if (socket && socket.connected) {
-                socket.emit('new_order', orderObj);
-                console.log('📤 Order sent to server:', shortId);
-            } else {
-                console.log('⚠️ Offline - order saved locally');
-                showToast("Offline - order will sync when connected");
-                // Store locally for when connection resumes
-                const pendingOrders = JSON.parse(localStorage.getItem('syncstay_pending_orders') || '[]');
-                pendingOrders.push(orderObj);
-                localStorage.setItem('syncstay_pending_orders', JSON.stringify(pendingOrders));
-            }
-        }
-
-
-        // Order cancellation
-        function cancelOrder(id) {
-            const order = activeOrders.find(o => o.orderId === id);
-            if (order && order.canCancel) {
-                if (confirm("Möchten Sie diese Bestellung wirklich stornieren?")) {
-                    order.status = "Storniert";
-                    order.canCancel = false;
-                    order.items.forEach(item => {
-                        item.cancelled = true;
-                    });
-
-                    // Remove from localStorage
-                    localStorage.removeItem('syncstay_active_order');
-
-                    renderTracker();
-                    updateDynamicIsland();
-
-                    if (socket && socket.connected) {
-                        socket.emit("cancel_order", {
-                            orderId: id,
-                            shortId: order.shortId,
-                            tenantId: TENANT_ID
-                        });
-                        console.log('Order canceled:', id);
-                    }
-
-                    // Auto-remove after 5 seconds
-                    setTimeout(() => {
-                        activeOrders = activeOrders.filter(o => o.orderId !== id);
-                        renderTracker();
-                        updateDynamicIsland();
-                    }, 5000);
-                }
-            } else {
-                showToast("Stornierung nicht mehr möglich");
-            }
-        }
-
-
-        function cancelOrderItem(orderId, itemIndex) {
-            const order = activeOrders.find(o => o.orderId === orderId);
-            if (order && order.items[itemIndex] && !order.items[itemIndex].cancelled) {
-                order.items[itemIndex].cancelled = true;
-
-                if (socket) {
-                    socket.emit("cancel_item", {
-                        orderId: orderId,
-                        shortId: order.shortId,
-                        itemIndex: itemIndex,
-                        itemName: order.items[itemIndex].name,
-                        tenantId: TENANT_ID
-                    });
-                    console.log('Item canceled:', orderId, 'Index:', itemIndex);
-                }
-
-                const allCancelled = order.items.every(item => item.cancelled === true);
-                if (allCancelled) {
-                    if (order.timers.cancelWindow) clearTimeout(order.timers.cancelWindow);
-                    if (order.timers.cookingStart) clearTimeout(order.timers.cookingStart);
-
-                    order.status = "Storniert";
-                    order.canCancel = false;
-
-                    setTimeout(() => {
-                        activeOrders = activeOrders.filter(o => o.orderId !== orderId);
-                        renderTracker();
-                        updateDynamicIsland();
-                    }, 5000);
-                }
-
-                renderTracker();
-            }
-        }
-
-        // Tracker rendering
-        function renderTracker() {
-            const list = document.getElementById("trackerList");
-            if (!list) return;
-
-            list.innerHTML = "";
-
-            if (activeOrders.length === 0) {
-                list.innerHTML = `
-                    <div style="text-align:center; padding:40px; color:var(--text-tertiary)">
-                        <i class="fas fa-clock" style="font-size:40px; margin-bottom:16px; opacity:0.5;"></i>
-                        <h3 style="margin-bottom:8px;">Keine aktiven Bestellungen</h3>
-                        <p>Ihre Bestellungen erscheinen hier</p>
-                    </div>`;
-                return;
-            }
-
-            activeOrders.forEach(order => {
-                let badgeClass = "badge-waiting";
-                let badgeText = order.status;
-
-                if (order.status === "In Zubereitung") {
-                    badgeClass = "badge-cooking";
-                    badgeText = "In Zubereitung";
-                } else if (order.status === "Prêt à être servi") {
-                    badgeClass = "badge-ready";
-                    badgeText = "Bereit zum Servieren";
-                } else if (order.status === "Storniert") {
-                    badgeClass = "badge-cancelled";
-                    badgeText = "Storniert";
-                }
-
-                let itemsHtml = "";
-                if (order.items && Array.isArray(order.items)) {
-                    order.items.forEach((item, index) => {
-                        const cancelled = item.cancelled ? "cancelled" : "";
-                        const cancelBtn = order.canCancel && !item.cancelled ?
-                            `<button class="item-cancel" onclick="cancelOrderItem(${order.orderId}, ${index})">
-                                <i class="fas fa-times"></i>
-                            </button>` : "";
-
-                        const modsHtml = item.mods && item.mods.length > 0 ?
-                            `<div class="item-mods">${item.mods.join(", ")}</div>` : "";
-
-                        itemsHtml += `
-                            <div class="order-item ${cancelled}">
-                                <div class="item-header">
-                                    <div class="item-name">${item.name}</div>
-                                    <div class="item-price-row">
-                                        <div class="item-price">${item.price.toFixed(2)} €</div>
-                                        ${cancelBtn}
-                                    </div>
-                                </div>
-                                ${modsHtml}
-                            </div>`;
-                    });
-                }
-
-                list.innerHTML += `
-                    <div class="order-tracker">
-                        <div class="tracker-header">
-                            <div class="tracker-id">#${order.shortId}</div>
-                            <div class="tracker-badge ${badgeClass}">${badgeText}</div>
-                        </div>
-                        <div style="color:var(--text-secondary); font-size:14px; margin-bottom:12px;">
-                            Tisch ${order.table}
-                        </div>
-                        <div class="progress-track">
-                            <div class="progress-fill" style="width:${order.progress}%"></div>
-                        </div>
-                        <div class="order-items">
-                            ${itemsHtml}
-                        </div>
-                        ${order.canCancel ? `
-                            <div class="tracker-actions">
-                                <button class="action-button cancel-button" onclick="cancelOrder(${order.orderId})">
-                                    Bestellung stornieren
-                                </button>
-                            </div>` : ''}
-                    </div>`;
-            });
-        }
-
-        // Dynamic Island
-        function updateDynamicIsland() {
             const island = document.getElementById("dynamicIsland");
-            const status = document.getElementById("trackerStatus");
-            const spinner = document.getElementById("trackerSpinner");
-            const check = document.getElementById("trackerCheck");
-
-            if (activeOrders.length === 0) {
-                island.classList.remove("active");
-                return;
-            }
-
             island.classList.add("active");
-            const latestOrder = activeOrders[0];
+            setTimeout(() => island.classList.remove("active"), 5000);
 
-            if (latestOrder.status === "Prêt à être servi") {
-                island.classList.add("ready");
-                status.innerHTML = `<div style="display:flex; flex-direction:column; align-items:flex-start; line-height:1.2;">
-                    <span style="font-size:14px; font-weight:700;">Bestellung fertig!</span>
-                    <span style="font-size:10px; font-weight:400; opacity:0.6;">Tippen zum Ansehen</span>
-                </div>`;
-                spinner.style.display = "none";
-                check.style.display = "block";
-                check.className = "fas fa-check";
-            } else if (latestOrder.status === "In Zubereitung") {
-                island.classList.remove("ready");
-                status.innerHTML = `<div style="display:flex; flex-direction:column; align-items:flex-start; line-height:1.2;">
-                    <span style="font-size:14px; font-weight:700;">In Zubereitung</span>
-                    <span style="font-size:10px; font-weight:400; opacity:0.6;">Tippen zum Ansehen</span>
-                </div>`;
-                spinner.style.display = "block";
-                check.style.display = "none";
-            } else if (latestOrder.status === "Storniert") {
-                island.classList.add("critical");
-                island.classList.remove("ready");
-                status.innerHTML = `<div style="display:flex; flex-direction:column; align-items:flex-start; line-height:1.2;">
-                    <span style="font-size:14px; font-weight:700;">⚠️ Bestellung storniert</span>
-                    <span style="font-size:10px; font-weight:400; opacity:0.6;">Tippen zum Ansehen</span>
-                </div>`;
-                spinner.style.display = "none";
-                check.style.display = "block";
-                check.className = "fas fa-exclamation-circle";
-            } else {
-                island.classList.remove("ready");
-                status.innerHTML = `<div style="display:flex; flex-direction:column; align-items:flex-start; line-height:1.2;">
-                    <span style="font-size:14px; font-weight:700;">Bestätigung...</span>
-                    <span style="font-size:10px; font-weight:400; opacity:0.6;">Tippen zum Ansehen</span>
-                </div>`;
-                spinner.style.display = "block";
-                check.style.display = "none";
-            }
+            window.open(`https://wa.me/${restaurantPhone}?text=${message}`, '_blank');
         }
 
-        // Socket events
-        if (socket) {
-            socket.on('status_change', (data) => {
-                const order = activeOrders.find(o => o.orderId === data.orderId);
-                if (order && order.status !== "Storniert") {
-                    if (order.timers.cancelWindow) clearTimeout(order.timers.cancelWindow);
-                    if (order.timers.cookingStart) clearTimeout(order.timers.cookingStart);
-
-                    order.status = data.status;
-                    order.progress = 100;
-
-                    readyAudio.currentTime = 0;
-                    readyAudio.play().catch(e => console.log("Audio error:", e));
-
-                    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-
-                    renderTracker();
-                    updateDynamicIsland();
-
-                    setTimeout(() => {
-                        activeOrders = activeOrders.filter(o => o.orderId !== data.orderId);
-                        renderTracker();
-                        updateDynamicIsland();
-                    }, 10000);
-                }
-            });
-        }
-
-        // Waiter call
-        function callWaiter() {
-            const tableNum = document.getElementById("currentTable").innerText;
-            const currentOrder = activeOrders[0];
-            const savedOrderId = localStorage.getItem('syncstay_active_order');
-
-            const orderId = currentOrder ? currentOrder.orderId : savedOrderId;
-
-            if (!socket || !socket.connected) {
-                showToast("⚠️ Verbindung fehlt - Kellner kann nicht gerufen werden");
-                return;
-            }
-
-            const payload = {
-                orderId: orderId,
-                tableNumber: tableNum,
-                table: tableNum,
-                tenantId: TENANT_ID
-            };
-
-            socket.emit('call_waiter', payload);
-            showToast("🔔 Kellner gerufen - Tisch " + tableNum);
-
-            // Visual feedback
-            const btn = document.getElementById("waiterBtn");
-            btn.classList.add("pulsing");
-            btn.innerHTML = '<i class="fas fa-check"></i>';
-
-            setTimeout(() => {
-                btn.classList.remove("pulsing");
-                btn.innerHTML = '<i class="fas fa-bell"></i>';
-            }, 30000);
-        }
-
-
-        // UI Helpers
+        function callWaiter() { showToast("🔔 Serveur appelé - Table " + tableNum); }
         function openSheet(id) {
-            // Close any other open sheets first
-            document.querySelectorAll('.bottom-sheet').forEach(sheet => {
-                sheet.classList.remove('active');
-            });
-
-            // Open the requested sheet
+            document.querySelectorAll('.bottom-sheet').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add("active");
-
-            // Show backdrop
-            const backdrop = document.getElementById('sheetBackdrop');
-            if (backdrop) {
-                backdrop.classList.add('active');
-            }
+            document.getElementById('sheetBackdrop').classList.add('active');
         }
-
         function closeSheet(id) {
-            // Reset product state when closing options sheet
-            if (id === 'optionsSheet') {
-                resetProductState();
-            }
-
-            // Auto-clear canceled orders when closing tracker sheet
-            if (id === 'trackerSheet') {
-                // Remove any orders that are "Annulé" or "Storniert" or "Canceled"
-                // This ensures the red notification disappears only AFTER the user has seen it and closed the sheet.
-                activeOrders = activeOrders.filter(o =>
-                    o.status !== "Annulé" &&
-                    o.status !== "Storniert" &&
-                    o.status !== "Canceled"
-                );
-                updateDynamicIsland(); // Refresh the pill immediately
-            }
-
             document.getElementById(id).classList.remove("active");
-
-            // Check if any sheets are still open
-            const anySheetOpen = Array.from(document.querySelectorAll('.bottom-sheet')).some(
-                sheet => sheet.classList.contains('active')
-            );
-
-            // Hide backdrop if no sheets are open
-            if (!anySheetOpen) {
-                const backdrop = document.getElementById('sheetBackdrop');
-                if (backdrop) {
-                    backdrop.classList.remove('active');
-                }
-            }
+            document.getElementById('sheetBackdrop').classList.remove('active');
         }
-
         function closeAllSheets() {
-            // Close all bottom sheets
-            document.querySelectorAll('.bottom-sheet').forEach(sheet => {
-                sheet.classList.remove('active');
-            });
-
-            // Hide backdrop
-            const backdrop = document.getElementById('sheetBackdrop');
-            if (backdrop) {
-                backdrop.classList.remove('active');
-            }
+            document.querySelectorAll('.bottom-sheet').forEach(s => s.classList.remove('active'));
+            document.getElementById('sheetBackdrop').classList.remove('active');
         }
-
         function showToast(message) {
             const toast = document.getElementById("toast");
-            toast.textContent = message;
-            toast.classList.add("show");
-
-            setTimeout(() => {
-                toast.classList.remove("show");
-            }, 3000);
+            toast.textContent = message; toast.classList.add("show");
+            setTimeout(() => toast.classList.remove("show"), 3000);
         }
-
-        // Make functions globally available
-        window.openProduct = openProduct;
-        window.openCart = openCart;
-        window.openTracker = () => {
-            renderTracker();
-            openSheet("trackerSheet");
-        };
-        window.setTable = setTable;
-        window.filterMenu = filterMenu;
-        window.addToCart = addToCart;
-        window.sendBatchOrder = sendBatchOrder;
-        window.callWaiter = callWaiter;
-        window.cancelOrder = cancelOrder;
-        window.cancelOrderItem = cancelOrderItem;
-        window.removeFromCart = removeFromCart;
-        window.closeSheet = closeSheet;
-
-        // Add cart icon to dynamic island when clicked
-        document.getElementById('dynamicIsland').addEventListener('click', () => {
-            if (activeOrders.length > 0) {
-                // Remove critical class on click (acknowledgment)
-                const island = document.getElementById('dynamicIsland');
-                if (island) {
-                    island.classList.remove('critical');
-                }
-                openTracker();
-            }
-        });
     </script>
 </body>
 
